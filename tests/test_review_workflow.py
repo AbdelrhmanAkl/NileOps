@@ -1,3 +1,4 @@
+from collections.abc import Generator
 
 import pytest
 from fastapi.testclient import TestClient
@@ -6,24 +7,26 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
 from src.api.main import app
+from src.core.security import create_access_token, hash_password
 from src.db.session import Base, get_db
 from src.models.kyc import (
     ApplicationStatus,
     AuditEvent,
+    DocumentStatus,
     KYCApplication,
     KYCDocument,
-    DocumentStatus,
 )
+from src.models.user import User
 
 
 @pytest.fixture
-def review_client():
+def review_client() -> Generator:
     engine = create_engine(
         "sqlite://",
         connect_args={"check_same_thread": False},
         poolclass=StaticPool,
     )
-    TestingSessionLocal = sessionmaker(
+    testing_session_local = sessionmaker(
         bind=engine,
         autoflush=False,
         autocommit=False,
@@ -31,10 +34,19 @@ def review_client():
     )
     Base.metadata.create_all(bind=engine)
 
-    with TestingSessionLocal() as db:
+    with testing_session_local() as db:
+        reviewer = User(
+            username="reviewer_test",
+            password_hash=hash_password("Test-Password-123!"),
+            role="reviewer",
+            is_active=True,
+        )
+        db.add(reviewer)
+        db.flush()
+
         application = KYCApplication(
             application_number="KYC-TEST-00001",
-            customer_name="عميل تجريبي",
+            customer_name="Test Customer",
             status=ApplicationStatus.PENDING.value,
         )
         db.add(application)
@@ -55,15 +67,22 @@ def review_client():
 
         db.commit()
         application_id = application.id
+        reviewer_id = reviewer.id
 
-    def override_get_db():
-        with TestingSessionLocal() as db:
+    def override_get_db() -> Generator:
+        with testing_session_local() as db:
             yield db
 
     app.dependency_overrides[get_db] = override_get_db
 
+    token = create_access_token(
+        subject=str(reviewer_id),
+        role="reviewer",
+    )
+    headers = {"Authorization": f"Bearer {token}"}
+
     with TestClient(app) as client:
-        yield client, TestingSessionLocal, application_id
+        yield client, testing_session_local, application_id, headers
 
     app.dependency_overrides.pop(get_db, None)
     Base.metadata.drop_all(bind=engine)
@@ -71,21 +90,21 @@ def review_client():
 
 
 def test_human_review_updates_status_and_audit(review_client):
-    client, session_factory, application_id = review_client
+    client, session_factory, application_id, headers = review_client
 
     response = client.post(
         f"/api/v1/kyc/applications/{application_id}/review",
+        headers=headers,
         json={
             "decision": "IN_REVIEW",
-            "reviewer_name": "Reviewer Test",
-            "notes": "بدأت مراجعة المستندات.",
+            "notes": "Started reviewing the submitted documents.",
         },
     )
 
     assert response.status_code == 200
     body = response.json()
     assert body["new_status"] == ApplicationStatus.IN_REVIEW.value
-    assert body["reviewer_name"] == "Reviewer Test"
+    assert body["reviewer_name"] == "reviewer_test"
 
     with session_factory() as db:
         application = db.get(KYCApplication, application_id)
@@ -98,18 +117,19 @@ def test_human_review_updates_status_and_audit(review_client):
         assert application.status == ApplicationStatus.IN_REVIEW.value
         assert len(events) == 1
         assert events[0].actor_type == "human"
+        assert events[0].actor_name == "reviewer_test"
         assert events[0].action == "HUMAN_REVIEW"
 
 
 def test_invalid_transition_is_rejected(review_client):
-    client, session_factory, application_id = review_client
+    client, session_factory, application_id, headers = review_client
 
     response = client.post(
         f"/api/v1/kyc/applications/{application_id}/review",
+        headers=headers,
         json={
             "decision": "APPROVED",
-            "reviewer_name": "Reviewer Test",
-            "notes": "محاولة اعتماد قبل بدء المراجعة.",
+            "notes": "Attempting approval before review.",
         },
     )
 
@@ -128,7 +148,7 @@ def test_invalid_transition_is_rejected(review_client):
 
 
 def test_approval_requires_all_documents_to_be_valid(review_client):
-    client, session_factory, application_id = review_client
+    client, session_factory, application_id, headers = review_client
 
     with session_factory() as db:
         application = db.get(KYCApplication, application_id)
@@ -137,10 +157,10 @@ def test_approval_requires_all_documents_to_be_valid(review_client):
 
     response = client.post(
         f"/api/v1/kyc/applications/{application_id}/review",
+        headers=headers,
         json={
             "decision": "APPROVED",
-            "reviewer_name": "Reviewer Test",
-            "notes": "تمت مراجعة الطلب.",
+            "notes": "Reviewing application documents.",
         },
     )
 
@@ -152,25 +172,24 @@ def test_approval_requires_all_documents_to_be_valid(review_client):
 
 
 def test_review_unknown_application_returns_404(review_client):
-    client, _, _ = review_client
+    client, _, _, headers = review_client
 
     response = client.post(
         "/api/v1/kyc/applications/999999/review",
+        headers=headers,
         json={
             "decision": "IN_REVIEW",
-            "reviewer_name": "Reviewer Test",
-            "notes": "مراجعة تجريبية.",
+            "notes": "Test review for missing application.",
         },
     )
 
     assert response.status_code == 404
 
 
-
 def test_approval_succeeds_when_all_required_documents_are_valid(
     review_client,
 ):
-    client, session_factory, application_id = review_client
+    client, session_factory, application_id, headers = review_client
 
     with session_factory() as db:
         application = db.get(KYCApplication, application_id)
@@ -189,10 +208,10 @@ def test_approval_succeeds_when_all_required_documents_are_valid(
 
     response = client.post(
         f"/api/v1/kyc/applications/{application_id}/review",
+        headers=headers,
         json={
             "decision": "APPROVED",
-            "reviewer_name": "Reviewer Test",
-            "notes": "تمت مراجعة المستندات المطلوبة.",
+            "notes": "All required documents have been reviewed.",
         },
     )
 
@@ -212,3 +231,81 @@ def test_approval_succeeds_when_all_required_documents_are_valid(
         assert event is not None
         assert event.previous_status == ApplicationStatus.IN_REVIEW.value
         assert event.new_status == ApplicationStatus.APPROVED.value
+
+
+def test_approval_rejects_duplicate_required_document(review_client):
+    client, session_factory, application_id, headers = review_client
+
+    with session_factory() as db:
+        application = db.get(KYCApplication, application_id)
+        application.status = ApplicationStatus.IN_REVIEW.value
+
+        documents = db.scalars(
+            select(KYCDocument).where(
+                KYCDocument.application_id == application_id
+            )
+        ).all()
+
+        for document in documents:
+            document.status = DocumentStatus.VALID.value
+
+        db.add(
+            KYCDocument(
+                application_id=application_id,
+                document_type=documents[0].document_type,
+                status=DocumentStatus.VALID.value,
+            )
+        )
+        db.commit()
+
+    response = client.post(
+        f"/api/v1/kyc/applications/{application_id}/review",
+        headers=headers,
+        json={
+            "decision": "APPROVED",
+            "notes": "Testing duplicate required documents.",
+        },
+    )
+
+    assert response.status_code == 409
+
+    with session_factory() as db:
+        application = db.get(KYCApplication, application_id)
+        events = db.scalars(
+            select(AuditEvent).where(
+                AuditEvent.application_id == application_id
+            )
+        ).all()
+
+        assert application.status == ApplicationStatus.IN_REVIEW.value
+        assert events == []
+
+
+def test_client_cannot_override_reviewer_identity(review_client):
+    client, _, application_id, headers = review_client
+
+    response = client.post(
+        f"/api/v1/kyc/applications/{application_id}/review",
+        headers=headers,
+        json={
+            "decision": "IN_REVIEW",
+            "reviewer_name": "forged_reviewer",
+            "notes": "Testing identity protection.",
+        },
+    )
+
+    assert response.status_code == 422
+
+
+def test_review_requires_authentication(review_client):
+    client, _, application_id, _ = review_client
+
+    response = client.post(
+        f"/api/v1/kyc/applications/{application_id}/review",
+        json={
+            "decision": "IN_REVIEW",
+            "notes": "Testing missing authentication.",
+        },
+    )
+
+    assert response.status_code == 401

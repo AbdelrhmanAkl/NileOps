@@ -1,5 +1,6 @@
 ﻿
-from typing import Any, Literal
+from datetime import datetime
+from typing import Literal
 
 from fastapi import Depends, FastAPI, HTTPException, Query
 from pydantic import BaseModel, ConfigDict, Field
@@ -7,6 +8,8 @@ from sqlalchemy import func, or_, select, text
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session, selectinload
 
+from src.api.auth import router as auth_router
+from src.core.auth import require_roles
 from src.core.config import get_settings
 from src.db.session import get_db
 from src.models.kyc import (
@@ -15,9 +18,10 @@ from src.models.kyc import (
     DocumentStatus,
     KYCApplication,
     KYCDocument,
-    ValidationResult,
     utc_now,
 )
+from src.models.user import User
+
 
 settings = get_settings()
 
@@ -31,6 +35,8 @@ app = FastAPI(
     version="0.1.0",
 )
 
+app.include_router(auth_router)
+
 
 class ApplicationSummary(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -41,8 +47,16 @@ class ApplicationSummary(BaseModel):
     application_type: str
     status: str
     branch_name: str | None
-    created_at: Any
-    updated_at: Any
+    created_at: datetime
+    updated_at: datetime
+
+
+class ApplicationListResponse(BaseModel):
+    message: str
+    total: int
+    page: int
+    page_size: int
+    items: list[ApplicationSummary]
 
 
 class DocumentResponse(BaseModel):
@@ -53,8 +67,8 @@ class DocumentResponse(BaseModel):
     status: str
     file_name: str | None
     reviewer_notes: str | None
-    uploaded_at: Any
-    created_at: Any
+    uploaded_at: datetime | None
+    created_at: datetime
 
 
 class ValidationResultResponse(BaseModel):
@@ -67,7 +81,7 @@ class ValidationResultResponse(BaseModel):
     severity: str
     passed: bool
     evidence: dict | list | None
-    created_at: Any
+    created_at: datetime
 
 
 class AuditEventResponse(BaseModel):
@@ -80,7 +94,7 @@ class AuditEventResponse(BaseModel):
     details_ar: str
     previous_status: str | None
     new_status: str | None
-    created_at: Any
+    created_at: datetime
 
 
 class ApplicationDetail(ApplicationSummary):
@@ -92,8 +106,14 @@ class ApplicationDetail(ApplicationSummary):
 
 
 class ReviewRequest(BaseModel):
-    decision: Literal["IN_REVIEW", "NEEDS_INFORMATION", "APPROVED", "REJECTED"]
-    reviewer_name: str = Field(min_length=2, max_length=150)
+    model_config = ConfigDict(extra="forbid")
+
+    decision: Literal[
+        "IN_REVIEW",
+        "NEEDS_INFORMATION",
+        "APPROVED",
+        "REJECTED",
+    ]
     notes: str = Field(min_length=3, max_length=2000)
 
 
@@ -129,6 +149,12 @@ ALLOWED_TRANSITIONS = {
     },
 }
 
+REQUIRED_DOCUMENT_TYPES = {
+    "بطاقة الرقم القومي",
+    "إثبات العنوان",
+    "استمارة بيانات العميل",
+}
+
 
 @app.get(
     "/health",
@@ -154,6 +180,7 @@ def health_check(db: Session = Depends(get_db)) -> dict[str, str]:
 
 @app.get(
     "/api/v1/kyc/applications",
+    response_model=ApplicationListResponse,
     tags=["طلبات اعرف عميلك"],
     summary="عرض طلبات العملاء",
 )
@@ -170,8 +197,11 @@ def list_applications(
     ),
     page: int = Query(default=1, ge=1),
     page_size: int = Query(default=20, ge=1, le=100),
+    current_user: User = Depends(
+        require_roles("viewer", "reviewer", "admin")
+    ),
     db: Session = Depends(get_db),
-) -> dict[str, Any]:
+) -> ApplicationListResponse:
     statement = select(KYCApplication)
 
     if q and q.strip():
@@ -197,16 +227,16 @@ def list_applications(
         .limit(page_size)
     ).all()
 
-    return {
-        "message": "تم استرجاع طلبات العملاء بنجاح.",
-        "total": total,
-        "page": page,
-        "page_size": page_size,
-        "items": [
-            ApplicationSummary.model_validate(item).model_dump(mode="json")
-            for item in applications
+    return ApplicationListResponse(
+        message="تم استرجاع طلبات العملاء بنجاح.",
+        total=total,
+        page=page,
+        page_size=page_size,
+        items=[
+            ApplicationSummary.model_validate(application)
+            for application in applications
         ],
-    }
+    )
 
 
 @app.get(
@@ -217,6 +247,9 @@ def list_applications(
 )
 def get_application(
     application_id: int,
+    current_user: User = Depends(
+        require_roles("viewer", "reviewer", "admin")
+    ),
     db: Session = Depends(get_db),
 ) -> ApplicationDetail:
     statement = (
@@ -249,6 +282,9 @@ def get_application(
 def review_application(
     application_id: int,
     payload: ReviewRequest,
+    current_user: User = Depends(
+        require_roles("reviewer", "admin")
+    ),
     db: Session = Depends(get_db),
 ) -> ReviewResponse:
     application = db.scalar(
@@ -279,22 +315,18 @@ def review_application(
             )
         ).all()
 
-        required_document_types = {
-            "بطاقة الرقم القومي",
-            "إثبات العنوان",
-            "استمارة بيانات العميل",
-        }
+        documents_by_type: dict[str, list[KYCDocument]] = {}
 
-        documents_by_type = {
-            document.document_type: document
-            for document in documents
-        }
+        for document in documents:
+            documents_by_type.setdefault(
+                document.document_type, []
+            ).append(document)
 
         all_documents_valid = all(
-            document_type in documents_by_type
-            and documents_by_type[document_type].status
+            len(documents_by_type.get(document_type, [])) == 1
+            and documents_by_type[document_type][0].status
             == DocumentStatus.VALID.value
-            for document_type in required_document_types
+            for document_type in REQUIRED_DOCUMENT_TYPES
         )
 
         if not all_documents_valid:
@@ -314,7 +346,7 @@ def review_application(
             application_id=application.id,
             action="HUMAN_REVIEW",
             actor_type="human",
-            actor_name=payload.reviewer_name.strip(),
+            actor_name=current_user.username,
             details_ar=payload.notes.strip(),
             previous_status=previous_status,
             new_status=new_status,
@@ -328,7 +360,7 @@ def review_application(
             application_number=application.application_number,
             previous_status=previous_status,
             new_status=new_status,
-            reviewer_name=payload.reviewer_name.strip(),
+            reviewer_name=current_user.username,
             audit_event_id=audit_event.id,
         )
 
