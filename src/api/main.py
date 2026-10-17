@@ -1,7 +1,8 @@
-﻿from typing import Any
+﻿
+from typing import Any, Literal
 
 from fastapi import Depends, FastAPI, HTTPException, Query
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import func, or_, select, text
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session, selectinload
@@ -9,10 +10,13 @@ from sqlalchemy.orm import Session, selectinload
 from src.core.config import get_settings
 from src.db.session import get_db
 from src.models.kyc import (
+    ApplicationStatus,
     AuditEvent,
+    DocumentStatus,
     KYCApplication,
     KYCDocument,
     ValidationResult,
+    utc_now,
 )
 
 settings = get_settings()
@@ -85,6 +89,45 @@ class ApplicationDetail(ApplicationSummary):
     documents: list[DocumentResponse]
     validation_results: list[ValidationResultResponse]
     audit_events: list[AuditEventResponse]
+
+
+class ReviewRequest(BaseModel):
+    decision: Literal["IN_REVIEW", "NEEDS_INFORMATION", "APPROVED", "REJECTED"]
+    reviewer_name: str = Field(min_length=2, max_length=150)
+    notes: str = Field(min_length=3, max_length=2000)
+
+
+class ReviewResponse(BaseModel):
+    message: str
+    application_id: int
+    application_number: str
+    previous_status: str
+    new_status: str
+    reviewer_name: str
+    audit_event_id: int
+
+
+REVIEW_STATUS_MAP = {
+    "IN_REVIEW": ApplicationStatus.IN_REVIEW.value,
+    "NEEDS_INFORMATION": ApplicationStatus.NEEDS_INFORMATION.value,
+    "APPROVED": ApplicationStatus.APPROVED.value,
+    "REJECTED": ApplicationStatus.REJECTED.value,
+}
+
+ALLOWED_TRANSITIONS = {
+    ApplicationStatus.PENDING.value: {
+        ApplicationStatus.IN_REVIEW.value,
+        ApplicationStatus.NEEDS_INFORMATION.value,
+    },
+    ApplicationStatus.IN_REVIEW.value: {
+        ApplicationStatus.NEEDS_INFORMATION.value,
+        ApplicationStatus.APPROVED.value,
+        ApplicationStatus.REJECTED.value,
+    },
+    ApplicationStatus.NEEDS_INFORMATION.value: {
+        ApplicationStatus.IN_REVIEW.value,
+    },
+}
 
 
 @app.get(
@@ -195,3 +238,106 @@ def get_application(
         )
 
     return ApplicationDetail.model_validate(application)
+
+
+@app.post(
+    "/api/v1/kyc/applications/{application_id}/review",
+    response_model=ReviewResponse,
+    tags=["المراجعة البشرية"],
+    summary="تسجيل قرار المراجع البشري",
+)
+def review_application(
+    application_id: int,
+    payload: ReviewRequest,
+    db: Session = Depends(get_db),
+) -> ReviewResponse:
+    application = db.scalar(
+        select(KYCApplication)
+        .where(KYCApplication.id == application_id)
+        .with_for_update()
+    )
+
+    if application is None:
+        raise HTTPException(
+            status_code=404,
+            detail="طلب العميل غير موجود.",
+        )
+
+    previous_status = application.status
+    new_status = REVIEW_STATUS_MAP[payload.decision]
+
+    if new_status not in ALLOWED_TRANSITIONS.get(previous_status, set()):
+        raise HTTPException(
+            status_code=409,
+            detail="انتقال حالة الطلب غير مسموح به.",
+        )
+
+    if new_status == ApplicationStatus.APPROVED.value:
+        documents = db.scalars(
+            select(KYCDocument).where(
+                KYCDocument.application_id == application_id
+            )
+        ).all()
+
+        required_document_types = {
+            "بطاقة الرقم القومي",
+            "إثبات العنوان",
+            "استمارة بيانات العميل",
+        }
+
+        documents_by_type = {
+            document.document_type: document
+            for document in documents
+        }
+
+        all_documents_valid = all(
+            document_type in documents_by_type
+            and documents_by_type[document_type].status
+            == DocumentStatus.VALID.value
+            for document_type in required_document_types
+        )
+
+        if not all_documents_valid:
+            raise HTTPException(
+                status_code=409,
+                detail=(
+                    "لا يمكن اعتماد الطلب قبل التأكد من استيفاء "
+                    "المستندات المطلوبة ومراجعتها بشريًا."
+                ),
+            )
+
+    try:
+        application.status = new_status
+        application.updated_at = utc_now()
+
+        audit_event = AuditEvent(
+            application_id=application.id,
+            action="HUMAN_REVIEW",
+            actor_type="human",
+            actor_name=payload.reviewer_name.strip(),
+            details_ar=payload.notes.strip(),
+            previous_status=previous_status,
+            new_status=new_status,
+        )
+        db.add(audit_event)
+        db.flush()
+
+        response = ReviewResponse(
+            message="تم تسجيل قرار المراجعة بنجاح.",
+            application_id=application.id,
+            application_number=application.application_number,
+            previous_status=previous_status,
+            new_status=new_status,
+            reviewer_name=payload.reviewer_name.strip(),
+            audit_event_id=audit_event.id,
+        )
+
+        db.commit()
+        return response
+
+    except SQLAlchemyError as exc:
+        db.rollback()
+        raise HTTPException(
+            status_code=500,
+            detail="تعذر حفظ قرار المراجعة. حاول مرة أخرى.",
+        ) from exc
