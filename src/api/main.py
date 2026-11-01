@@ -9,6 +9,8 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session, selectinload
 
 from src.api.auth import router as auth_router
+from src.api.banking import router as banking_router
+from src.api.complaints import router as complaints_router
 from src.core.auth import require_roles
 from src.core.config import get_settings
 from src.db.session import get_db
@@ -36,6 +38,8 @@ app = FastAPI(
 )
 
 app.include_router(auth_router)
+app.include_router(banking_router)
+app.include_router(complaints_router)
 
 
 class ApplicationSummary(BaseModel):
