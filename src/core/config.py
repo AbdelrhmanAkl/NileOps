@@ -27,6 +27,13 @@ class Settings(BaseSettings):
     upload_dir: str = "storage"
     max_upload_size_mb: int = Field(default=10, ge=1, le=50)
 
+    # OCR (Tesseract). Set TESSERACT_CMD to the full path on Windows if needed.
+    tesseract_cmd: str = "tesseract"
+    ocr_languages: str = Field(default="ara+eng", pattern=r"^[a-z_+]{3,40}$")
+    ocr_timeout_seconds: int = Field(default=60, ge=5, le=300)
+    ocr_min_confidence: float = Field(default=0.80, ge=0.0, le=1.0)
+    ocr_max_pdf_pages: int = Field(default=3, ge=1, le=10)
+
     jwt_secret_key: SecretStr = Field(
         min_length=32,
         validation_alias="JWT_SECRET_KEY",

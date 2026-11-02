@@ -10,6 +10,7 @@ from src.models.kyc import (
     ValidationSeverity,
 )
 from src.models.user import User
+from src.models.documents import DocumentFile, ExtractedField
 from src.models.banking import (
     AccountOpeningRequest,
     BankAccount,
@@ -28,6 +29,8 @@ __all__ = [
     "ValidationResult",
     "ValidationSeverity",
     "User",
+    "DocumentFile",
+    "ExtractedField",
     "AccountOpeningRequest",
     "BankAccount",
     "BankingAuditEvent",
