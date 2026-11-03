@@ -34,6 +34,17 @@ class Settings(BaseSettings):
     ocr_min_confidence: float = Field(default=0.80, ge=0.0, le=1.0)
     ocr_max_pdf_pages: int = Field(default=3, ge=1, le=10)
 
+    # Policy knowledge base (RAG) and the optional local LLM (e.g. Qwen via Ollama).
+    policies_dir: str = "knowledge/policies"
+    rag_top_k: int = Field(default=3, ge=1, le=8)
+    rag_min_coverage: float = Field(default=0.55, ge=0.0, le=1.0)
+    # Grey zone [rag_llm_min_coverage, rag_min_coverage): only a local LLM may answer.
+    rag_llm_min_coverage: float = Field(default=0.25, ge=0.0, le=1.0)
+    llm_provider: Literal["none", "ollama"] = "none"
+    llm_base_url: str = "http://localhost:11434"
+    llm_model: str = Field(default="qwen2.5:7b-instruct", max_length=80)
+    llm_timeout_seconds: int = Field(default=90, ge=5, le=600)
+
     jwt_secret_key: SecretStr = Field(
         min_length=32,
         validation_alias="JWT_SECRET_KEY",
@@ -49,6 +60,11 @@ class Settings(BaseSettings):
     def resolved_upload_dir(self) -> Path:
         """Return the upload directory resolved against the project root."""
         path = Path(self.upload_dir)
+        return path if path.is_absolute() else PROJECT_ROOT / path
+
+    @property
+    def resolved_policies_dir(self) -> Path:
+        path = Path(self.policies_dir)
         return path if path.is_absolute() else PROJECT_ROOT / path
 
     @model_validator(mode="after")

@@ -12,6 +12,7 @@ from src.api.auth import router as auth_router
 from src.api.banking import router as banking_router
 from src.api.complaints import router as complaints_router
 from src.api.documents import router as documents_router
+from src.api.policies import router as policies_router
 from src.core.auth import require_roles
 from src.core.config import get_settings
 from src.db.session import get_db
@@ -42,6 +43,7 @@ app.include_router(auth_router)
 app.include_router(banking_router)
 app.include_router(complaints_router)
 app.include_router(documents_router)
+app.include_router(policies_router)
 
 
 class ApplicationSummary(BaseModel):

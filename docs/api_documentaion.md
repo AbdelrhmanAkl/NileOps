@@ -81,28 +81,47 @@ Fetches field values parsed by the Document AI service along with confidence sco
 
 ### 3. Policy Assistant (RAG)
 
-#### Query Policy Knowledge Base
-Allows operations employees to query internal banking rules and receive grounded responses with citation metadata.
+Answers questions from the approved policy files in `knowledge/policies/`, always with
+citations (policy code, version, section). When the policies do not cover the question
+the assistant **abstains** instead of guessing. Answers are advisory; a human decides.
+See `docs/policies_rag.md` for setup (including the local Qwen model).
 
-* Endpoint: `POST /api/v1/policies/ask`
-* Request Body (`application/json`):
-```json
-{
-  "query": "What are the required proof-of-address documents for updating corporate data?"
-}
-```
+#### Query Policy Knowledge Base
+* Endpoint: `POST /api/v1/policies/ask` (roles: viewer, reviewer, admin)
+* Request Body: `{"question": "..."}` (5–500 characters; `"query"` is accepted as an alias)
 * Response (`200 OK`):
 ```json
 {
-  "answered": true,
-  "response_text": "According to the KYC Policy v2.1, acceptable proof of address documents include utility bills not older than 3 months or a certified lease agreement.",
-  "citation": {
-    "policy_name": "Retail_KYC_Policy_Guidelines.pdf",
-    "version": "v2.1",
-    "section": "3.2"
-  }
+  "status": "answered",
+  "mode": "extractive",
+  "answer": "تُسلَّم البطاقة الجديدة خلال 7 أيام عمل من تاريخ اعتماد الطلب. ... [1]",
+  "coverage": 0.83,
+  "citations": [
+    {
+      "number": 1,
+      "chunk_id": 12,
+      "policy_code": "POL-CARD-001",
+      "version": 2,
+      "title": "سياسة إصدار البطاقات",
+      "heading": "مدة التسليم",
+      "excerpt": "تُسلَّم البطاقة الجديدة خلال 7 أيام عمل ...",
+      "score": 5.412
+    }
+  ],
+  "note": null,
+  "advisory": "إجابة استرشادية من سياسات البنك؛ القرار النهائي للموظف المختص."
 }
 ```
+* `status`: `answered` or `abstained` (no citations when abstained).
+* `mode`: `extractive` (text taken from the policy), `llm` (rephrased by the local model
+  and verified against the cited passages) or `none` (abstained before any model call).
+
+#### Browse policies
+* `GET /api/v1/policies?include_superseded=false` — active policy versions.
+* `GET /api/v1/policies/{policy_code}?version=N` — sections of the latest (or a given) version.
+* `POST /api/v1/policies/reload` (admin) — load new/changed files from the policies folder.
+  A new `version:` supersedes the older one for answers; old versions stay readable.
+  Changing text without bumping `version:` is reported as a conflict and not applied.
 
 ---
 

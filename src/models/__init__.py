@@ -11,6 +11,7 @@ from src.models.kyc import (
 )
 from src.models.user import User
 from src.models.documents import DocumentFile, ExtractedField
+from src.models.policies import PolicyChunk, PolicyDocument
 from src.models.banking import (
     AccountOpeningRequest,
     BankAccount,
@@ -31,6 +32,8 @@ __all__ = [
     "User",
     "DocumentFile",
     "ExtractedField",
+    "PolicyChunk",
+    "PolicyDocument",
     "AccountOpeningRequest",
     "BankAccount",
     "BankingAuditEvent",

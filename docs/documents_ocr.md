@@ -64,7 +64,8 @@ retention policy to it.
 
 ## Setup
 
-1. Database: `python scripts/init_db.py` (adds `document_files` and
+0. Install the new dependency: `pip install -r requirements.txt` (adds Pillow).
+1. Database: `python -m scripts.init_db` (adds `document_files` and
    `extracted_fields`; existing tables are untouched).
 2. Tesseract with Arabic:
    * Windows: install the UB Mannheim build and tick **Arabic** (`ara`) in the
@@ -77,9 +78,9 @@ retention policy to it.
 ## Measuring quality
 
 ```
-python scripts/generate_synthetic_documents.py --count 30 --out data/synthetic_docs
-python scripts/generate_synthetic_documents.py --count 30 --out data/synthetic_docs_scan --quality scan
-python scripts/evaluate_ocr.py --dir data/synthetic_docs --show-errors
+python -m scripts.generate_synthetic_documents --count 30 --out data/synthetic_docs
+python -m scripts.generate_synthetic_documents --count 30 --out data/synthetic_docs_scan --quality scan
+python -m scripts.evaluate_ocr --dir data/synthetic_docs --show-errors
 ```
 
 The evaluator reports per-field precision, recall, F1 and **silent errors**
