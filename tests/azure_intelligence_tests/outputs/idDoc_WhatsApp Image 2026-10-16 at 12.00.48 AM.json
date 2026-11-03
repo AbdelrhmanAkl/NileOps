@@ -1,0 +1,1529 @@
+{
+  "apiVersion": "2024-11-30",
+  "modelId": "prebuilt-idDocument",
+  "stringIndexType": "textElements",
+  "content": "بطاقة الهوية الوطنية\n0\nالمملكة العربية السعودية عالية الداخلية\nالمملكة العربية السعودية\nبطاقة الهوية الوطنية\nوزارة الداخلية\n*\nشقة: ٥\nصالح بن فهد بن عبدالكريم السنيدي\nالوقت\n١٠٠٠٤٩٨٥٨٢\nتاريخ الإنهاء\n١٤٣٥/٠٣/١٣ هـ\nجهة الإصدار:\nمركز المعلومات الوطني\nالرياض\nتاريخ الميلاد\n١٤٠٣/٠٤/٠١هـ\nشعب المحطة\nسية القسط\n١٢٢٢٥٦\nالرياض\n٠٦٢١٥٢٠٦٠١\n1000416582",
+  "pages": [
+    {
+      "pageNumber": 1,
+      "angle": -0.2184000015258789,
+      "width": 228,
+      "height": 164,
+      "unit": "pixel",
+      "words": [
+        {
+          "content": "بطاقة",
+          "polygon": [
+            132,
+            4,
+            168,
+            4,
+            168,
+            20,
+            133,
+            20
+          ],
+          "confidence": 0.987,
+          "span": {
+            "offset": 0,
+            "length": 5
+          }
+        },
+        {
+          "content": "الهوية",
+          "polygon": [
+            95,
+            4,
+            129,
+            4,
+            129,
+            20,
+            96,
+            20
+          ],
+          "confidence": 0.971,
+          "span": {
+            "offset": 6,
+            "length": 6
+          }
+        },
+        {
+          "content": "الوطنية",
+          "polygon": [
+            58,
+            5,
+            92,
+            4,
+            92,
+            20,
+            59,
+            21
+          ],
+          "confidence": 0.982,
+          "span": {
+            "offset": 13,
+            "length": 7
+          }
+        },
+        {
+          "content": "0",
+          "polygon": [
+            16,
+            20,
+            25,
+            20,
+            26,
+            25,
+            16,
+            26
+          ],
+          "confidence": 0.449,
+          "span": {
+            "offset": 21,
+            "length": 1
+          }
+        },
+        {
+          "content": "المملكة",
+          "polygon": [
+            72,
+            26,
+            89,
+            26,
+            89,
+            32,
+            72,
+            32
+          ],
+          "confidence": 0.239,
+          "span": {
+            "offset": 23,
+            "length": 7
+          }
+        },
+        {
+          "content": "العربية",
+          "polygon": [
+            58,
+            26,
+            71,
+            26,
+            71,
+            32,
+            58,
+            33
+          ],
+          "confidence": 0.216,
+          "span": {
+            "offset": 31,
+            "length": 7
+          }
+        },
+        {
+          "content": "السعودية",
+          "polygon": [
+            40,
+            26,
+            57,
+            26,
+            57,
+            33,
+            40,
+            33
+          ],
+          "confidence": 0.119,
+          "span": {
+            "offset": 39,
+            "length": 8
+          }
+        },
+        {
+          "content": "عالية",
+          "polygon": [
+            31,
+            26,
+            38,
+            26,
+            38,
+            33,
+            31,
+            32
+          ],
+          "confidence": 0.502,
+          "span": {
+            "offset": 48,
+            "length": 5
+          }
+        },
+        {
+          "content": "الداخلية",
+          "polygon": [
+            15,
+            26,
+            30,
+            26,
+            30,
+            32,
+            15,
+            33
+          ],
+          "confidence": 0.253,
+          "span": {
+            "offset": 54,
+            "length": 8
+          }
+        },
+        {
+          "content": "المملكة",
+          "polygon": [
+            180,
+            40,
+            202,
+            40,
+            202,
+            47,
+            180,
+            47
+          ],
+          "confidence": 0.725,
+          "span": {
+            "offset": 63,
+            "length": 7
+          }
+        },
+        {
+          "content": "العربية",
+          "polygon": [
+            158,
+            40,
+            178,
+            40,
+            178,
+            47,
+            158,
+            47
+          ],
+          "confidence": 0.977,
+          "span": {
+            "offset": 71,
+            "length": 7
+          }
+        },
+        {
+          "content": "السعودية",
+          "polygon": [
+            129,
+            40,
+            157,
+            40,
+            157,
+            47,
+            129,
+            47
+          ],
+          "confidence": 0.895,
+          "span": {
+            "offset": 79,
+            "length": 8
+          }
+        },
+        {
+          "content": "بطاقة",
+          "polygon": [
+            68,
+            40,
+            87,
+            40,
+            87,
+            48,
+            68,
+            48
+          ],
+          "confidence": 0.979,
+          "span": {
+            "offset": 88,
+            "length": 5
+          }
+        },
+        {
+          "content": "الهوية",
+          "polygon": [
+            48,
+            40,
+            67,
+            40,
+            67,
+            48,
+            48,
+            48
+          ],
+          "confidence": 0.453,
+          "span": {
+            "offset": 94,
+            "length": 6
+          }
+        },
+        {
+          "content": "الوطنية",
+          "polygon": [
+            25,
+            40,
+            47,
+            40,
+            47,
+            48,
+            25,
+            48
+          ],
+          "confidence": 0.838,
+          "span": {
+            "offset": 101,
+            "length": 7
+          }
+        },
+        {
+          "content": "وزارة",
+          "polygon": [
+            168,
+            48,
+            184,
+            48,
+            184,
+            57,
+            168,
+            57
+          ],
+          "confidence": 0.797,
+          "span": {
+            "offset": 109,
+            "length": 5
+          }
+        },
+        {
+          "content": "الداخلية",
+          "polygon": [
+            147,
+            48,
+            166,
+            48,
+            166,
+            57,
+            147,
+            57
+          ],
+          "confidence": 0.092,
+          "span": {
+            "offset": 115,
+            "length": 8
+          }
+        },
+        {
+          "content": "*",
+          "polygon": [
+            103,
+            48,
+            115,
+            48,
+            115,
+            57,
+            103,
+            57
+          ],
+          "confidence": 0.017,
+          "span": {
+            "offset": 124,
+            "length": 1
+          }
+        },
+        {
+          "content": "شقة:",
+          "polygon": [
+            51,
+            49,
+            70,
+            49,
+            70,
+            56,
+            51,
+            56
+          ],
+          "confidence": 0.462,
+          "span": {
+            "offset": 126,
+            "length": 4
+          }
+        },
+        {
+          "content": "٥",
+          "polygon": [
+            46,
+            49,
+            50,
+            49,
+            50,
+            56,
+            46,
+            56
+          ],
+          "confidence": 0.274,
+          "span": {
+            "offset": 131,
+            "length": 1
+          }
+        },
+        {
+          "content": "صالح",
+          "polygon": [
+            192,
+            64,
+            207,
+            64,
+            207,
+            74,
+            192,
+            74
+          ],
+          "confidence": 0.971,
+          "span": {
+            "offset": 133,
+            "length": 4
+          }
+        },
+        {
+          "content": "بن",
+          "polygon": [
+            185,
+            64,
+            190,
+            64,
+            190,
+            74,
+            185,
+            74
+          ],
+          "confidence": 0.988,
+          "span": {
+            "offset": 138,
+            "length": 2
+          }
+        },
+        {
+          "content": "فهد",
+          "polygon": [
+            174,
+            64,
+            183,
+            64,
+            183,
+            74,
+            175,
+            74
+          ],
+          "confidence": 0.361,
+          "span": {
+            "offset": 141,
+            "length": 3
+          }
+        },
+        {
+          "content": "بن",
+          "polygon": [
+            167,
+            64,
+            173,
+            64,
+            173,
+            74,
+            167,
+            74
+          ],
+          "confidence": 0.99,
+          "span": {
+            "offset": 145,
+            "length": 2
+          }
+        },
+        {
+          "content": "عبدالكريم",
+          "polygon": [
+            140,
+            65,
+            165,
+            64,
+            165,
+            74,
+            140,
+            74
+          ],
+          "confidence": 0.776,
+          "span": {
+            "offset": 148,
+            "length": 9
+          }
+        },
+        {
+          "content": "السنيدي",
+          "polygon": [
+            119,
+            65,
+            138,
+            65,
+            138,
+            74,
+            119,
+            74
+          ],
+          "confidence": 0.859,
+          "span": {
+            "offset": 158,
+            "length": 7
+          }
+        },
+        {
+          "content": "الوقت",
+          "polygon": [
+            193,
+            83,
+            207,
+            83,
+            208,
+            90,
+            194,
+            89
+          ],
+          "confidence": 0.215,
+          "span": {
+            "offset": 166,
+            "length": 5
+          }
+        },
+        {
+          "content": "١٠٠٠٤٩٨٥٨٢",
+          "polygon": [
+            97,
+            82,
+            161,
+            82,
+            161,
+            91,
+            97,
+            92
+          ],
+          "confidence": 0.968,
+          "span": {
+            "offset": 172,
+            "length": 10
+          }
+        },
+        {
+          "content": "تاريخ",
+          "polygon": [
+            195,
+            94,
+            208,
+            94,
+            208,
+            100,
+            195,
+            100
+          ],
+          "confidence": 0.549,
+          "span": {
+            "offset": 183,
+            "length": 5
+          }
+        },
+        {
+          "content": "الإنهاء",
+          "polygon": [
+            178,
+            94,
+            193,
+            94,
+            194,
+            100,
+            178,
+            100
+          ],
+          "confidence": 0.284,
+          "span": {
+            "offset": 189,
+            "length": 7
+          }
+        },
+        {
+          "content": "١٤٣٥/٠٣/١٣",
+          "polygon": [
+            114,
+            93,
+            161,
+            93,
+            162,
+            101,
+            115,
+            102
+          ],
+          "confidence": 0.719,
+          "span": {
+            "offset": 197,
+            "length": 10
+          }
+        },
+        {
+          "content": "هـ",
+          "polygon": [
+            108,
+            93,
+            113,
+            93,
+            113,
+            102,
+            108,
+            102
+          ],
+          "confidence": 0.59,
+          "span": {
+            "offset": 208,
+            "length": 2
+          }
+        },
+        {
+          "content": "جهة",
+          "polygon": [
+            197,
+            106,
+            206,
+            106,
+            206,
+            111,
+            197,
+            111
+          ],
+          "confidence": 0.5,
+          "span": {
+            "offset": 211,
+            "length": 3
+          }
+        },
+        {
+          "content": "الإصدار:",
+          "polygon": [
+            177,
+            106,
+            195,
+            106,
+            195,
+            111,
+            177,
+            111
+          ],
+          "confidence": 0.655,
+          "span": {
+            "offset": 215,
+            "length": 8
+          }
+        },
+        {
+          "content": "مركز",
+          "polygon": [
+            147,
+            104,
+            160,
+            104,
+            160,
+            113,
+            147,
+            113
+          ],
+          "confidence": 0.877,
+          "span": {
+            "offset": 224,
+            "length": 4
+          }
+        },
+        {
+          "content": "المعلومات",
+          "polygon": [
+            130,
+            105,
+            145,
+            104,
+            145,
+            113,
+            130,
+            113
+          ],
+          "confidence": 0.057,
+          "span": {
+            "offset": 229,
+            "length": 9
+          }
+        },
+        {
+          "content": "الوطني",
+          "polygon": [
+            113,
+            105,
+            128,
+            105,
+            129,
+            113,
+            113,
+            114
+          ],
+          "confidence": 0.365,
+          "span": {
+            "offset": 239,
+            "length": 6
+          }
+        },
+        {
+          "content": "الرياض",
+          "polygon": [
+            143,
+            117,
+            160,
+            116,
+            160,
+            124,
+            143,
+            124
+          ],
+          "confidence": 0.962,
+          "span": {
+            "offset": 246,
+            "length": 6
+          }
+        },
+        {
+          "content": "تاريخ",
+          "polygon": [
+            195,
+            129,
+            207,
+            128,
+            208,
+            134,
+            195,
+            134
+          ],
+          "confidence": 0.772,
+          "span": {
+            "offset": 253,
+            "length": 5
+          }
+        },
+        {
+          "content": "الميلاد",
+          "polygon": [
+            181,
+            129,
+            194,
+            129,
+            194,
+            134,
+            181,
+            134
+          ],
+          "confidence": 0.193,
+          "span": {
+            "offset": 259,
+            "length": 7
+          }
+        },
+        {
+          "content": "١٤٠٣/٠٤/٠١هـ",
+          "polygon": [
+            109,
+            128,
+            160,
+            128,
+            160,
+            136,
+            109,
+            136
+          ],
+          "confidence": 0.705,
+          "span": {
+            "offset": 267,
+            "length": 12
+          }
+        },
+        {
+          "content": "شعب",
+          "polygon": [
+            198,
+            143,
+            206,
+            144,
+            206,
+            149,
+            198,
+            149
+          ],
+          "confidence": 0.187,
+          "span": {
+            "offset": 280,
+            "length": 3
+          }
+        },
+        {
+          "content": "المحطة",
+          "polygon": [
+            184,
+            143,
+            197,
+            143,
+            197,
+            149,
+            184,
+            148
+          ],
+          "confidence": 0.369,
+          "span": {
+            "offset": 284,
+            "length": 6
+          }
+        },
+        {
+          "content": "سية",
+          "polygon": [
+            148,
+            144,
+            157,
+            144,
+            157,
+            149,
+            148,
+            149
+          ],
+          "confidence": 0.334,
+          "span": {
+            "offset": 291,
+            "length": 3
+          }
+        },
+        {
+          "content": "القسط",
+          "polygon": [
+            135,
+            144,
+            147,
+            144,
+            147,
+            149,
+            136,
+            149
+          ],
+          "confidence": 0.304,
+          "span": {
+            "offset": 295,
+            "length": 5
+          }
+        },
+        {
+          "content": "١٢٢٢٥٦",
+          "polygon": [
+            182,
+            150,
+            204,
+            149,
+            204,
+            155,
+            182,
+            155
+          ],
+          "confidence": 0.532,
+          "span": {
+            "offset": 301,
+            "length": 6
+          }
+        },
+        {
+          "content": "الرياض",
+          "polygon": [
+            147,
+            151,
+            162,
+            150,
+            162,
+            157,
+            147,
+            157
+          ],
+          "confidence": 0.442,
+          "span": {
+            "offset": 308,
+            "length": 6
+          }
+        },
+        {
+          "content": "٠٦٢١٥٢٠٦٠١",
+          "polygon": [
+            76,
+            151,
+            113,
+            150,
+            113,
+            156,
+            77,
+            157
+          ],
+          "confidence": 0.356,
+          "span": {
+            "offset": 315,
+            "length": 10
+          }
+        },
+        {
+          "content": "1000416582",
+          "polygon": [
+            30,
+            151,
+            63,
+            151,
+            63,
+            157,
+            31,
+            157
+          ],
+          "confidence": 0.654,
+          "span": {
+            "offset": 326,
+            "length": 10
+          }
+        }
+      ],
+      "lines": [
+        {
+          "content": "بطاقة الهوية الوطنية",
+          "polygon": [
+            58,
+            4,
+            167,
+            3,
+            168,
+            20,
+            58,
+            21
+          ],
+          "spans": [
+            {
+              "offset": 0,
+              "length": 20
+            }
+          ]
+        },
+        {
+          "content": "0",
+          "polygon": [
+            16,
+            20,
+            26,
+            20,
+            26,
+            25,
+            16,
+            25
+          ],
+          "spans": [
+            {
+              "offset": 21,
+              "length": 1
+            }
+          ]
+        },
+        {
+          "content": "المملكة العربية السعودية عالية الداخلية",
+          "polygon": [
+            15,
+            26,
+            89,
+            26,
+            89,
+            32,
+            15,
+            33
+          ],
+          "spans": [
+            {
+              "offset": 23,
+              "length": 39
+            }
+          ]
+        },
+        {
+          "content": "المملكة العربية السعودية",
+          "polygon": [
+            129,
+            40,
+            202,
+            40,
+            202,
+            47,
+            129,
+            47
+          ],
+          "spans": [
+            {
+              "offset": 63,
+              "length": 24
+            }
+          ]
+        },
+        {
+          "content": "بطاقة الهوية الوطنية",
+          "polygon": [
+            25,
+            40,
+            87,
+            40,
+            87,
+            48,
+            25,
+            48
+          ],
+          "spans": [
+            {
+              "offset": 88,
+              "length": 20
+            }
+          ]
+        },
+        {
+          "content": "وزارة الداخلية",
+          "polygon": [
+            147,
+            48,
+            183,
+            48,
+            183,
+            57,
+            147,
+            57
+          ],
+          "spans": [
+            {
+              "offset": 109,
+              "length": 14
+            }
+          ]
+        },
+        {
+          "content": "*",
+          "polygon": [
+            103,
+            48,
+            115,
+            48,
+            115,
+            57,
+            103,
+            57
+          ],
+          "spans": [
+            {
+              "offset": 124,
+              "length": 1
+            }
+          ]
+        },
+        {
+          "content": "شقة: ٥",
+          "polygon": [
+            46,
+            49,
+            70,
+            49,
+            70,
+            56,
+            46,
+            56
+          ],
+          "spans": [
+            {
+              "offset": 126,
+              "length": 6
+            }
+          ]
+        },
+        {
+          "content": "صالح بن فهد بن عبدالكريم السنيدي",
+          "polygon": [
+            119,
+            65,
+            207,
+            64,
+            207,
+            74,
+            119,
+            74
+          ],
+          "spans": [
+            {
+              "offset": 133,
+              "length": 32
+            }
+          ]
+        },
+        {
+          "content": "الوقت",
+          "polygon": [
+            193,
+            83,
+            207,
+            83,
+            207,
+            89,
+            194,
+            90
+          ],
+          "spans": [
+            {
+              "offset": 166,
+              "length": 5
+            }
+          ]
+        },
+        {
+          "content": "١٠٠٠٤٩٨٥٨٢",
+          "polygon": [
+            97,
+            82,
+            161,
+            82,
+            161,
+            91,
+            97,
+            91
+          ],
+          "spans": [
+            {
+              "offset": 172,
+              "length": 10
+            }
+          ]
+        },
+        {
+          "content": "تاريخ الإنهاء",
+          "polygon": [
+            178,
+            94,
+            207,
+            94,
+            207,
+            100,
+            178,
+            100
+          ],
+          "spans": [
+            {
+              "offset": 183,
+              "length": 13
+            }
+          ]
+        },
+        {
+          "content": "١٤٣٥/٠٣/١٣ هـ",
+          "polygon": [
+            108,
+            93,
+            161,
+            93,
+            161,
+            101,
+            108,
+            102
+          ],
+          "spans": [
+            {
+              "offset": 197,
+              "length": 13
+            }
+          ]
+        },
+        {
+          "content": "جهة الإصدار:",
+          "polygon": [
+            177,
+            106,
+            206,
+            106,
+            206,
+            111,
+            177,
+            111
+          ],
+          "spans": [
+            {
+              "offset": 211,
+              "length": 12
+            }
+          ]
+        },
+        {
+          "content": "مركز المعلومات الوطني",
+          "polygon": [
+            113,
+            105,
+            159,
+            104,
+            159,
+            113,
+            113,
+            114
+          ],
+          "spans": [
+            {
+              "offset": 224,
+              "length": 21
+            }
+          ]
+        },
+        {
+          "content": "الرياض",
+          "polygon": [
+            143,
+            117,
+            159,
+            116,
+            160,
+            124,
+            143,
+            124
+          ],
+          "spans": [
+            {
+              "offset": 246,
+              "length": 6
+            }
+          ]
+        },
+        {
+          "content": "تاريخ الميلاد",
+          "polygon": [
+            181,
+            129,
+            207,
+            128,
+            207,
+            134,
+            181,
+            135
+          ],
+          "spans": [
+            {
+              "offset": 253,
+              "length": 13
+            }
+          ]
+        },
+        {
+          "content": "١٤٠٣/٠٤/٠١هـ",
+          "polygon": [
+            109,
+            128,
+            160,
+            128,
+            160,
+            136,
+            109,
+            136
+          ],
+          "spans": [
+            {
+              "offset": 267,
+              "length": 12
+            }
+          ]
+        },
+        {
+          "content": "شعب المحطة",
+          "polygon": [
+            184,
+            143,
+            206,
+            143,
+            206,
+            149,
+            184,
+            148
+          ],
+          "spans": [
+            {
+              "offset": 280,
+              "length": 10
+            }
+          ]
+        },
+        {
+          "content": "سية القسط",
+          "polygon": [
+            135,
+            144,
+            158,
+            144,
+            158,
+            149,
+            135,
+            149
+          ],
+          "spans": [
+            {
+              "offset": 291,
+              "length": 9
+            }
+          ]
+        },
+        {
+          "content": "١٢٢٢٥٦",
+          "polygon": [
+            182,
+            149,
+            204,
+            149,
+            204,
+            155,
+            182,
+            155
+          ],
+          "spans": [
+            {
+              "offset": 301,
+              "length": 6
+            }
+          ]
+        },
+        {
+          "content": "الرياض",
+          "polygon": [
+            147,
+            151,
+            162,
+            150,
+            162,
+            157,
+            147,
+            157
+          ],
+          "spans": [
+            {
+              "offset": 308,
+              "length": 6
+            }
+          ]
+        },
+        {
+          "content": "٠٦٢١٥٢٠٦٠١",
+          "polygon": [
+            76,
+            150,
+            112,
+            150,
+            112,
+            156,
+            77,
+            157
+          ],
+          "spans": [
+            {
+              "offset": 315,
+              "length": 10
+            }
+          ]
+        },
+        {
+          "content": "1000416582",
+          "polygon": [
+            30,
+            151,
+            63,
+            151,
+            63,
+            157,
+            30,
+            157
+          ],
+          "spans": [
+            {
+              "offset": 326,
+              "length": 10
+            }
+          ]
+        }
+      ],
+      "spans": [
+        {
+          "offset": 0,
+          "length": 336
+        }
+      ]
+    }
+  ],
+  "styles": [],
+  "documents": [
+    {
+      "docType": "idDocument.nationalIdentityCard",
+      "boundingRegions": [
+        {
+          "pageNumber": 1,
+          "polygon": [
+            0,
+            0,
+            228,
+            0,
+            228,
+            164,
+            0,
+            164
+          ]
+        }
+      ],
+      "fields": {
+        "DateOfBirth": {
+          "type": "date",
+          "valueDate": "1983-01-15",
+          "content": "١٤٠٣/٠٤/٠١هـ",
+          "boundingRegions": [
+            {
+              "pageNumber": 1,
+              "polygon": [
+                109,
+                128,
+                160,
+                128,
+                160,
+                136,
+                109,
+                136
+              ]
+            }
+          ],
+          "confidence": 0.421,
+          "spans": [
+            {
+              "offset": 267,
+              "length": 12
+            }
+          ]
+        },
+        "DateOfExpiration": {
+          "type": "date",
+          "valueDate": "2014-01-14",
+          "content": "١٤٣٥/٠٣/١٣ هـ",
+          "boundingRegions": [
+            {
+              "pageNumber": 1,
+              "polygon": [
+                108,
+                93,
+                162,
+                93,
+                162,
+                102,
+                108,
+                102
+              ]
+            }
+          ],
+          "confidence": 0.248,
+          "spans": [
+            {
+              "offset": 197,
+              "length": 13
+            }
+          ]
+        },
+        "DocumentNumber": {
+          "type": "string",
+          "valueString": "١٠٠٠٤٩٨٥٨٢",
+          "content": "١٠٠٠٤٩٨٥٨٢",
+          "boundingRegions": [
+            {
+              "pageNumber": 1,
+              "polygon": [
+                97,
+                82,
+                161,
+                82,
+                161,
+                91,
+                97,
+                92
+              ]
+            }
+          ],
+          "confidence": 0.594,
+          "spans": [
+            {
+              "offset": 172,
+              "length": 10
+            }
+          ]
+        },
+        "FirstName": {
+          "type": "string",
+          "valueString": "صالح",
+          "content": "صالح",
+          "boundingRegions": [
+            {
+              "pageNumber": 1,
+              "polygon": [
+                192,
+                64,
+                207,
+                64,
+                207,
+                74,
+                192,
+                74
+              ]
+            }
+          ],
+          "confidence": 0.222,
+          "spans": [
+            {
+              "offset": 133,
+              "length": 4
+            }
+          ]
+        },
+        "LastName": {
+          "type": "string",
+          "valueString": "بن فهد بن عبدالكريم السنيدي",
+          "content": "بن فهد بن عبدالكريم السنيدي",
+          "boundingRegions": [
+            {
+              "pageNumber": 1,
+              "polygon": [
+                119,
+                64,
+                190,
+                64,
+                190,
+                74,
+                119,
+                74
+              ]
+            }
+          ],
+          "confidence": 0.182,
+          "spans": [
+            {
+              "offset": 138,
+              "length": 27
+            }
+          ]
+        }
+      },
+      "confidence": 1,
+      "spans": [
+        {
+          "offset": 0,
+          "length": 336
+        }
+      ]
+    }
+  ],
+  "contentFormat": "text"
+}

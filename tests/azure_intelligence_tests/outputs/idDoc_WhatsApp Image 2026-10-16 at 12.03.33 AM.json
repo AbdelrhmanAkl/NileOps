@@ -1,0 +1,1432 @@
+{
+  "apiVersion": "2024-11-30",
+  "modelId": "prebuilt-idDocument",
+  "stringIndexType": "textElements",
+  "content": "الملكة العربية السعودية\nهولي متم\nKINGDOM OF SAUDI ARABIA\nشرة الداخلية\nRESIDENT IDENTITY\nMINISTRY OF INTERIOR\nكريستيانو رونالدو دوس سانتوس أفيرو\nCRISTIANO RONALDO DOS SANTOS AVEIRO\nالرقم ٢٥٣٧٩٢٥٧٢٠ نسخة ١\nمكان الإصدار جوازاة الرياض\nالإصدار ١٤٤٤/٠٦/٠٦ الميلاد ١٩٨٥/٠٢/٠٥\nالمهنة عامل\nالجنسية البرتغالية الديانة كريستيان\nصاحب العمل مؤسسة نادي النصر السعودية\n2538925860",
+  "pages": [
+    {
+      "pageNumber": 1,
+      "angle": -0.11559999734163284,
+      "width": 680,
+      "height": 464,
+      "unit": "pixel",
+      "words": [
+        {
+          "content": "الملكة",
+          "polygon": [
+            585,
+            27,
+            645,
+            25,
+            645,
+            55,
+            585,
+            55
+          ],
+          "confidence": 0.286,
+          "span": {
+            "offset": 0,
+            "length": 6
+          }
+        },
+        {
+          "content": "العربية",
+          "polygon": [
+            531,
+            26,
+            579,
+            27,
+            580,
+            55,
+            532,
+            55
+          ],
+          "confidence": 0.066,
+          "span": {
+            "offset": 7,
+            "length": 7
+          }
+        },
+        {
+          "content": "السعودية",
+          "polygon": [
+            465,
+            25,
+            526,
+            26,
+            526,
+            55,
+            465,
+            56
+          ],
+          "confidence": 0.265,
+          "span": {
+            "offset": 15,
+            "length": 8
+          }
+        },
+        {
+          "content": "هولي",
+          "polygon": [
+            362,
+            22,
+            418,
+            21,
+            418,
+            52,
+            362,
+            54
+          ],
+          "confidence": 0.458,
+          "span": {
+            "offset": 24,
+            "length": 4
+          }
+        },
+        {
+          "content": "متم",
+          "polygon": [
+            268,
+            21,
+            354,
+            22,
+            354,
+            55,
+            268,
+            59
+          ],
+          "confidence": 0.23,
+          "span": {
+            "offset": 29,
+            "length": 3
+          }
+        },
+        {
+          "content": "KINGDOM",
+          "polygon": [
+            33,
+            36,
+            99,
+            35,
+            99,
+            54,
+            33,
+            54
+          ],
+          "confidence": 0.881,
+          "span": {
+            "offset": 33,
+            "length": 7
+          }
+        },
+        {
+          "content": "OF",
+          "polygon": [
+            103,
+            35,
+            120,
+            35,
+            120,
+            54,
+            103,
+            54
+          ],
+          "confidence": 0.992,
+          "span": {
+            "offset": 41,
+            "length": 2
+          }
+        },
+        {
+          "content": "SAUDI",
+          "polygon": [
+            125,
+            36,
+            165,
+            35,
+            165,
+            54,
+            125,
+            54
+          ],
+          "confidence": 0.992,
+          "span": {
+            "offset": 44,
+            "length": 5
+          }
+        },
+        {
+          "content": "ARABIA",
+          "polygon": [
+            169,
+            35,
+            222,
+            35,
+            222,
+            54,
+            169,
+            54
+          ],
+          "confidence": 0.653,
+          "span": {
+            "offset": 50,
+            "length": 6
+          }
+        },
+        {
+          "content": "شرة",
+          "polygon": [
+            573,
+            58,
+            612,
+            58,
+            612,
+            87,
+            573,
+            88
+          ],
+          "confidence": 0.152,
+          "span": {
+            "offset": 57,
+            "length": 3
+          }
+        },
+        {
+          "content": "الداخلية",
+          "polygon": [
+            496,
+            58,
+            567,
+            58,
+            567,
+            88,
+            496,
+            88
+          ],
+          "confidence": 0.049,
+          "span": {
+            "offset": 61,
+            "length": 8
+          }
+        },
+        {
+          "content": "RESIDENT",
+          "polygon": [
+            267,
+            66,
+            341,
+            66,
+            341,
+            89,
+            267,
+            89
+          ],
+          "confidence": 0.977,
+          "span": {
+            "offset": 70,
+            "length": 8
+          }
+        },
+        {
+          "content": "IDENTITY",
+          "polygon": [
+            345,
+            66,
+            418,
+            66,
+            418,
+            88,
+            345,
+            89
+          ],
+          "confidence": 0.977,
+          "span": {
+            "offset": 79,
+            "length": 8
+          }
+        },
+        {
+          "content": "MINISTRY",
+          "polygon": [
+            35,
+            62,
+            105,
+            62,
+            105,
+            80,
+            35,
+            80
+          ],
+          "confidence": 0.899,
+          "span": {
+            "offset": 88,
+            "length": 8
+          }
+        },
+        {
+          "content": "OF",
+          "polygon": [
+            108,
+            62,
+            127,
+            62,
+            127,
+            80,
+            108,
+            80
+          ],
+          "confidence": 0.993,
+          "span": {
+            "offset": 97,
+            "length": 2
+          }
+        },
+        {
+          "content": "INTERIOR",
+          "polygon": [
+            132,
+            62,
+            204,
+            62,
+            204,
+            80,
+            132,
+            80
+          ],
+          "confidence": 0.962,
+          "span": {
+            "offset": 100,
+            "length": 8
+          }
+        },
+        {
+          "content": "كريستيانو",
+          "polygon": [
+            576,
+            90,
+            648,
+            89,
+            648,
+            119,
+            576,
+            119
+          ],
+          "confidence": 0.854,
+          "span": {
+            "offset": 109,
+            "length": 9
+          }
+        },
+        {
+          "content": "رونالدو",
+          "polygon": [
+            516,
+            90,
+            565,
+            90,
+            565,
+            119,
+            516,
+            119
+          ],
+          "confidence": 0.926,
+          "span": {
+            "offset": 119,
+            "length": 7
+          }
+        },
+        {
+          "content": "دوس",
+          "polygon": [
+            468,
+            90,
+            505,
+            90,
+            505,
+            119,
+            468,
+            119
+          ],
+          "confidence": 0.989,
+          "span": {
+            "offset": 127,
+            "length": 3
+          }
+        },
+        {
+          "content": "سانتوس",
+          "polygon": [
+            397,
+            90,
+            457,
+            90,
+            457,
+            120,
+            397,
+            120
+          ],
+          "confidence": 0.973,
+          "span": {
+            "offset": 131,
+            "length": 6
+          }
+        },
+        {
+          "content": "أفيرو",
+          "polygon": [
+            348,
+            90,
+            386,
+            90,
+            386,
+            120,
+            348,
+            120
+          ],
+          "confidence": 0.65,
+          "span": {
+            "offset": 138,
+            "length": 5
+          }
+        },
+        {
+          "content": "CRISTIANO",
+          "polygon": [
+            214,
+            122,
+            328,
+            121,
+            328,
+            148,
+            214,
+            148
+          ],
+          "confidence": 0.992,
+          "span": {
+            "offset": 144,
+            "length": 9
+          }
+        },
+        {
+          "content": "RONALDO",
+          "polygon": [
+            339,
+            121,
+            426,
+            121,
+            426,
+            148,
+            339,
+            148
+          ],
+          "confidence": 0.995,
+          "span": {
+            "offset": 154,
+            "length": 7
+          }
+        },
+        {
+          "content": "DOS",
+          "polygon": [
+            437,
+            121,
+            474,
+            121,
+            474,
+            148,
+            437,
+            148
+          ],
+          "confidence": 0.997,
+          "span": {
+            "offset": 162,
+            "length": 3
+          }
+        },
+        {
+          "content": "SANTOS",
+          "polygon": [
+            487,
+            121,
+            560,
+            121,
+            560,
+            148,
+            487,
+            148
+          ],
+          "confidence": 0.996,
+          "span": {
+            "offset": 166,
+            "length": 6
+          }
+        },
+        {
+          "content": "AVEIRO",
+          "polygon": [
+            571,
+            121,
+            650,
+            121,
+            650,
+            148,
+            571,
+            148
+          ],
+          "confidence": 0.992,
+          "span": {
+            "offset": 173,
+            "length": 6
+          }
+        },
+        {
+          "content": "الرقم",
+          "polygon": [
+            616,
+            162,
+            656,
+            162,
+            656,
+            186,
+            616,
+            185
+          ],
+          "confidence": 0.877,
+          "span": {
+            "offset": 180,
+            "length": 5
+          }
+        },
+        {
+          "content": "٢٥٣٧٩٢٥٧٢٠",
+          "polygon": [
+            441,
+            162,
+            597,
+            162,
+            597,
+            185,
+            441,
+            184
+          ],
+          "confidence": 0.576,
+          "span": {
+            "offset": 186,
+            "length": 10
+          }
+        },
+        {
+          "content": "نسخة",
+          "polygon": [
+            365,
+            162,
+            405,
+            162,
+            405,
+            184,
+            365,
+            184
+          ],
+          "confidence": 0.712,
+          "span": {
+            "offset": 197,
+            "length": 4
+          }
+        },
+        {
+          "content": "١",
+          "polygon": [
+            331,
+            162,
+            341,
+            162,
+            341,
+            184,
+            331,
+            184
+          ],
+          "confidence": 0.926,
+          "span": {
+            "offset": 202,
+            "length": 1
+          }
+        },
+        {
+          "content": "مكان",
+          "polygon": [
+            619,
+            194,
+            654,
+            194,
+            655,
+            217,
+            619,
+            217
+          ],
+          "confidence": 0.988,
+          "span": {
+            "offset": 204,
+            "length": 4
+          }
+        },
+        {
+          "content": "الإصدار",
+          "polygon": [
+            562,
+            195,
+            615,
+            194,
+            615,
+            217,
+            562,
+            218
+          ],
+          "confidence": 0.567,
+          "span": {
+            "offset": 209,
+            "length": 7
+          }
+        },
+        {
+          "content": "جوازاة",
+          "polygon": [
+            499,
+            195,
+            547,
+            195,
+            547,
+            218,
+            499,
+            218
+          ],
+          "confidence": 0.801,
+          "span": {
+            "offset": 217,
+            "length": 6
+          }
+        },
+        {
+          "content": "الرياض",
+          "polygon": [
+            431,
+            196,
+            486,
+            195,
+            486,
+            218,
+            431,
+            219
+          ],
+          "confidence": 0.962,
+          "span": {
+            "offset": 224,
+            "length": 6
+          }
+        },
+        {
+          "content": "الإصدار",
+          "polygon": [
+            598,
+            228,
+            656,
+            227,
+            656,
+            251,
+            598,
+            251
+          ],
+          "confidence": 0.667,
+          "span": {
+            "offset": 231,
+            "length": 7
+          }
+        },
+        {
+          "content": "١٤٤٤/٠٦/٠٦",
+          "polygon": [
+            469,
+            228,
+            568,
+            228,
+            568,
+            251,
+            469,
+            251
+          ],
+          "confidence": 0.217,
+          "span": {
+            "offset": 239,
+            "length": 10
+          }
+        },
+        {
+          "content": "الميلاد",
+          "polygon": [
+            394,
+            228,
+            432,
+            228,
+            432,
+            251,
+            394,
+            250
+          ],
+          "confidence": 0.396,
+          "span": {
+            "offset": 250,
+            "length": 7
+          }
+        },
+        {
+          "content": "١٩٨٥/٠٢/٠٥",
+          "polygon": [
+            268,
+            227,
+            367,
+            228,
+            367,
+            250,
+            268,
+            250
+          ],
+          "confidence": 0.738,
+          "span": {
+            "offset": 258,
+            "length": 10
+          }
+        },
+        {
+          "content": "المهنة",
+          "polygon": [
+            619,
+            262,
+            655,
+            261,
+            655,
+            284,
+            618,
+            283
+          ],
+          "confidence": 0.611,
+          "span": {
+            "offset": 269,
+            "length": 6
+          }
+        },
+        {
+          "content": "عامل",
+          "polygon": [
+            558,
+            261,
+            592,
+            261,
+            592,
+            283,
+            558,
+            283
+          ],
+          "confidence": 0.77,
+          "span": {
+            "offset": 276,
+            "length": 4
+          }
+        },
+        {
+          "content": "الجنسية",
+          "polygon": [
+            597,
+            294,
+            656,
+            293,
+            656,
+            319,
+            597,
+            320
+          ],
+          "confidence": 0.686,
+          "span": {
+            "offset": 281,
+            "length": 7
+          }
+        },
+        {
+          "content": "البرتغالية",
+          "polygon": [
+            490,
+            294,
+            558,
+            294,
+            558,
+            320,
+            490,
+            320
+          ],
+          "confidence": 0.463,
+          "span": {
+            "offset": 289,
+            "length": 10
+          }
+        },
+        {
+          "content": "الديانة",
+          "polygon": [
+            358,
+            294,
+            404,
+            294,
+            404,
+            319,
+            358,
+            319
+          ],
+          "confidence": 0.338,
+          "span": {
+            "offset": 300,
+            "length": 7
+          }
+        },
+        {
+          "content": "كريستيان",
+          "polygon": [
+            260,
+            293,
+            337,
+            294,
+            337,
+            318,
+            260,
+            319
+          ],
+          "confidence": 0.894,
+          "span": {
+            "offset": 308,
+            "length": 8
+          }
+        },
+        {
+          "content": "صاحب",
+          "polygon": [
+            607,
+            333,
+            656,
+            332,
+            656,
+            360,
+            607,
+            360
+          ],
+          "confidence": 0.988,
+          "span": {
+            "offset": 317,
+            "length": 4
+          }
+        },
+        {
+          "content": "العمل",
+          "polygon": [
+            561,
+            333,
+            601,
+            333,
+            602,
+            361,
+            561,
+            361
+          ],
+          "confidence": 0.966,
+          "span": {
+            "offset": 322,
+            "length": 5
+          }
+        },
+        {
+          "content": "مؤسسة",
+          "polygon": [
+            478,
+            333,
+            540,
+            333,
+            541,
+            361,
+            478,
+            362
+          ],
+          "confidence": 0.814,
+          "span": {
+            "offset": 328,
+            "length": 5
+          }
+        },
+        {
+          "content": "نادي",
+          "polygon": [
+            428,
+            333,
+            464,
+            333,
+            464,
+            362,
+            428,
+            362
+          ],
+          "confidence": 0.736,
+          "span": {
+            "offset": 334,
+            "length": 4
+          }
+        },
+        {
+          "content": "النصر",
+          "polygon": [
+            368,
+            334,
+            414,
+            334,
+            414,
+            362,
+            368,
+            362
+          ],
+          "confidence": 0.987,
+          "span": {
+            "offset": 339,
+            "length": 5
+          }
+        },
+        {
+          "content": "السعودية",
+          "polygon": [
+            278,
+            334,
+            355,
+            334,
+            355,
+            362,
+            278,
+            362
+          ],
+          "confidence": 0.973,
+          "span": {
+            "offset": 345,
+            "length": 8
+          }
+        },
+        {
+          "content": "2538925860",
+          "polygon": [
+            52,
+            421,
+            178,
+            420,
+            178,
+            436,
+            52,
+            436
+          ],
+          "confidence": 0.992,
+          "span": {
+            "offset": 354,
+            "length": 10
+          }
+        }
+      ],
+      "lines": [
+        {
+          "content": "الملكة العربية السعودية",
+          "polygon": [
+            465,
+            25,
+            645,
+            24,
+            645,
+            55,
+            465,
+            55
+          ],
+          "spans": [
+            {
+              "offset": 0,
+              "length": 23
+            }
+          ]
+        },
+        {
+          "content": "هولي متم",
+          "polygon": [
+            268,
+            21,
+            418,
+            21,
+            418,
+            58,
+            268,
+            59
+          ],
+          "spans": [
+            {
+              "offset": 24,
+              "length": 8
+            }
+          ]
+        },
+        {
+          "content": "KINGDOM OF SAUDI ARABIA",
+          "polygon": [
+            33,
+            35,
+            221,
+            35,
+            221,
+            54,
+            33,
+            54
+          ],
+          "spans": [
+            {
+              "offset": 33,
+              "length": 23
+            }
+          ]
+        },
+        {
+          "content": "شرة الداخلية",
+          "polygon": [
+            496,
+            58,
+            611,
+            58,
+            611,
+            87,
+            496,
+            88
+          ],
+          "spans": [
+            {
+              "offset": 57,
+              "length": 12
+            }
+          ]
+        },
+        {
+          "content": "RESIDENT IDENTITY",
+          "polygon": [
+            266,
+            66,
+            417,
+            66,
+            417,
+            88,
+            267,
+            89
+          ],
+          "spans": [
+            {
+              "offset": 70,
+              "length": 17
+            }
+          ]
+        },
+        {
+          "content": "MINISTRY OF INTERIOR",
+          "polygon": [
+            35,
+            62,
+            203,
+            62,
+            203,
+            80,
+            35,
+            80
+          ],
+          "spans": [
+            {
+              "offset": 88,
+              "length": 20
+            }
+          ]
+        },
+        {
+          "content": "كريستيانو رونالدو دوس سانتوس أفيرو",
+          "polygon": [
+            348,
+            90,
+            647,
+            89,
+            647,
+            119,
+            348,
+            120
+          ],
+          "spans": [
+            {
+              "offset": 109,
+              "length": 34
+            }
+          ]
+        },
+        {
+          "content": "CRISTIANO RONALDO DOS SANTOS AVEIRO",
+          "polygon": [
+            214,
+            121,
+            649,
+            121,
+            649,
+            147,
+            214,
+            148
+          ],
+          "spans": [
+            {
+              "offset": 144,
+              "length": 35
+            }
+          ]
+        },
+        {
+          "content": "الرقم ٢٥٣٧٩٢٥٧٢٠ نسخة ١",
+          "polygon": [
+            331,
+            161,
+            656,
+            162,
+            655,
+            185,
+            331,
+            183
+          ],
+          "spans": [
+            {
+              "offset": 180,
+              "length": 23
+            }
+          ]
+        },
+        {
+          "content": "مكان الإصدار جوازاة الرياض",
+          "polygon": [
+            431,
+            195,
+            654,
+            194,
+            654,
+            217,
+            431,
+            218
+          ],
+          "spans": [
+            {
+              "offset": 204,
+              "length": 26
+            }
+          ]
+        },
+        {
+          "content": "الإصدار ١٤٤٤/٠٦/٠٦ الميلاد ١٩٨٥/٠٢/٠٥",
+          "polygon": [
+            268,
+            227,
+            655,
+            227,
+            655,
+            251,
+            268,
+            251
+          ],
+          "spans": [
+            {
+              "offset": 231,
+              "length": 37
+            }
+          ]
+        },
+        {
+          "content": "المهنة عامل",
+          "polygon": [
+            558,
+            261,
+            654,
+            261,
+            654,
+            284,
+            558,
+            283
+          ],
+          "spans": [
+            {
+              "offset": 269,
+              "length": 11
+            }
+          ]
+        },
+        {
+          "content": "الجنسية البرتغالية الديانة كريستيان",
+          "polygon": [
+            260,
+            293,
+            656,
+            293,
+            656,
+            320,
+            260,
+            320
+          ],
+          "spans": [
+            {
+              "offset": 281,
+              "length": 35
+            }
+          ]
+        },
+        {
+          "content": "صاحب العمل مؤسسة نادي النصر السعودية",
+          "polygon": [
+            278,
+            334,
+            655,
+            332,
+            655,
+            361,
+            278,
+            363
+          ],
+          "spans": [
+            {
+              "offset": 317,
+              "length": 36
+            }
+          ]
+        },
+        {
+          "content": "2538925860",
+          "polygon": [
+            52,
+            420,
+            177,
+            420,
+            177,
+            435,
+            52,
+            436
+          ],
+          "spans": [
+            {
+              "offset": 354,
+              "length": 10
+            }
+          ]
+        }
+      ],
+      "spans": [
+        {
+          "offset": 0,
+          "length": 364
+        }
+      ]
+    }
+  ],
+  "styles": [
+    {
+      "confidence": 0.5,
+      "spans": [
+        {
+          "offset": 24,
+          "length": 8
+        }
+      ],
+      "isHandwritten": true
+    }
+  ],
+  "documents": [
+    {
+      "docType": "idDocument.nationalIdentityCard",
+      "boundingRegions": [
+        {
+          "pageNumber": 1,
+          "polygon": [
+            0,
+            0,
+            680,
+            0,
+            680,
+            464,
+            0,
+            464
+          ]
+        }
+      ],
+      "fields": {
+        "DateOfBirth": {
+          "type": "date",
+          "valueDate": "1985-02-05",
+          "content": "١٩٨٥/٠٢/٠٥",
+          "boundingRegions": [
+            {
+              "pageNumber": 1,
+              "polygon": [
+                268,
+                227,
+                367,
+                228,
+                367,
+                250,
+                268,
+                250
+              ]
+            }
+          ],
+          "confidence": 0.605,
+          "spans": [
+            {
+              "offset": 258,
+              "length": 10
+            }
+          ]
+        },
+        "DocumentNumber": {
+          "type": "string",
+          "valueString": "٢٥٣٧٩٢٥٧٢٠",
+          "content": "٢٥٣٧٩٢٥٧٢٠",
+          "boundingRegions": [
+            {
+              "pageNumber": 1,
+              "polygon": [
+                441,
+                162,
+                597,
+                162,
+                597,
+                185,
+                441,
+                184
+              ]
+            }
+          ],
+          "confidence": 0.499,
+          "spans": [
+            {
+              "offset": 186,
+              "length": 10
+            }
+          ]
+        },
+        "FirstName": {
+          "type": "string",
+          "valueString": "CRISTIANO",
+          "content": "CRISTIANO",
+          "boundingRegions": [
+            {
+              "pageNumber": 1,
+              "polygon": [
+                214,
+                122,
+                328,
+                121,
+                328,
+                148,
+                214,
+                148
+              ]
+            }
+          ],
+          "confidence": 0.854,
+          "spans": [
+            {
+              "offset": 144,
+              "length": 9
+            }
+          ]
+        },
+        "FirstNameNative": {
+          "type": "string",
+          "valueString": "كريستيانو",
+          "content": "كريستيانو",
+          "boundingRegions": [
+            {
+              "pageNumber": 1,
+              "polygon": [
+                576,
+                90,
+                648,
+                89,
+                648,
+                119,
+                576,
+                119
+              ]
+            }
+          ],
+          "confidence": 0.71,
+          "spans": [
+            {
+              "offset": 109,
+              "length": 9
+            }
+          ]
+        },
+        "LastName": {
+          "type": "string",
+          "valueString": "RONALDO DOS SANTOS AVEIRO",
+          "content": "RONALDO DOS SANTOS AVEIRO",
+          "boundingRegions": [
+            {
+              "pageNumber": 1,
+              "polygon": [
+                339,
+                121,
+                650,
+                121,
+                650,
+                148,
+                339,
+                148
+              ]
+            }
+          ],
+          "confidence": 0.787,
+          "spans": [
+            {
+              "offset": 154,
+              "length": 25
+            }
+          ]
+        },
+        "LastNameNative": {
+          "type": "string",
+          "valueString": "رونالدو دوس سانتوس أفيرو",
+          "content": "رونالدو دوس سانتوس أفيرو",
+          "boundingRegions": [
+            {
+              "pageNumber": 1,
+              "polygon": [
+                348,
+                90,
+                565,
+                90,
+                565,
+                120,
+                348,
+                120
+              ]
+            }
+          ],
+          "confidence": 0.521,
+          "spans": [
+            {
+              "offset": 119,
+              "length": 24
+            }
+          ]
+        }
+      },
+      "confidence": 1,
+      "spans": [
+        {
+          "offset": 0,
+          "length": 364
+        }
+      ]
+    }
+  ],
+  "contentFormat": "text"
+}

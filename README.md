@@ -440,4 +440,3 @@ OCR and AI components must remain assistive. Final consequential banking decisio
 7. Never commit local databases, secrets, or private documents.
 8. Run the full test suite before requesting review.
 9. Document implemented features separately from planned work.
-```

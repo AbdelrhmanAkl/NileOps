@@ -1,0 +1,2433 @@
+{
+  "apiVersion": "2024-11-30",
+  "modelId": "prebuilt-layout",
+  "stringIndexType": "textElements",
+  "content": "<figure>\n\nالهوية الوطنية\nرقم الدخل.\n\nالمملكة العربية السعودية\nوعادة الداخلية\n\nأحمد بن عبدالرحمن أحمد\n\nAHMADI ABDULRAHMAN AHMAD\n\nNi: 1234567890\n\nالمرقم : ٠١٢٣٤٥٦٧٨٩\n\nDOR: 00/08/1909\n\nتاريخ الميلاد : ١٤٠٠/٦٦/١٢\n\nDOE: 01/08/2023\n\nتاريخ الانتهاء : ١٤٤٠/١١/١٢\n\n1234567690\n\nمكان الميلاد : الرياض\n\n</figure>\n\n\n<figure>\n\nKisądem of Saudi Arabia\nMinistry of Intenor\n\nNational ID Cardf\n\n\\-\n123-1568590\n\nSN 11223344555677\n\nIDSAU123456789<0017<11111 <<<<\n6908061M2308010SAU<1 <<<<<<<< 6\nAHMAD <<< ABDULRAHMAN << AHMAD\n\n</figure>\n",
+  "pages": [
+    {
+      "pageNumber": 1,
+      "angle": -0.025200000032782555,
+      "width": 600,
+      "height": 729,
+      "unit": "pixel",
+      "words": [
+        {
+          "content": "الهوية",
+          "polygon": [
+            190,
+            83,
+            223,
+            83,
+            223,
+            98,
+            190,
+            98
+          ],
+          "confidence": 0.229,
+          "span": {
+            "offset": 10,
+            "length": 6
+          }
+        },
+        {
+          "content": "الوطنية",
+          "polygon": [
+            148,
+            83,
+            187,
+            83,
+            187,
+            98,
+            147,
+            98
+          ],
+          "confidence": 0.814,
+          "span": {
+            "offset": 17,
+            "length": 7
+          }
+        },
+        {
+          "content": "رقم",
+          "polygon": [
+            194,
+            98,
+            214,
+            98,
+            214,
+            112,
+            194,
+            112
+          ],
+          "confidence": 0.484,
+          "span": {
+            "offset": 25,
+            "length": 3
+          }
+        },
+        {
+          "content": "الدخل.",
+          "polygon": [
+            145,
+            98,
+            192,
+            98,
+            191,
+            112,
+            144,
+            111
+          ],
+          "confidence": 0.246,
+          "span": {
+            "offset": 29,
+            "length": 6
+          }
+        },
+        {
+          "content": "المملكة",
+          "polygon": [
+            409,
+            82,
+            449,
+            82,
+            449,
+            97,
+            409,
+            97
+          ],
+          "confidence": 0.973,
+          "span": {
+            "offset": 37,
+            "length": 7
+          }
+        },
+        {
+          "content": "العربية",
+          "polygon": [
+            373,
+            82,
+            406,
+            82,
+            406,
+            97,
+            373,
+            97
+          ],
+          "confidence": 0.949,
+          "span": {
+            "offset": 45,
+            "length": 7
+          }
+        },
+        {
+          "content": "السعودية",
+          "polygon": [
+            321,
+            82,
+            370,
+            82,
+            370,
+            97,
+            321,
+            98
+          ],
+          "confidence": 0.986,
+          "span": {
+            "offset": 53,
+            "length": 8
+          }
+        },
+        {
+          "content": "وعادة",
+          "polygon": [
+            394,
+            98,
+            419,
+            98,
+            419,
+            112,
+            394,
+            112
+          ],
+          "confidence": 0.448,
+          "span": {
+            "offset": 62,
+            "length": 5
+          }
+        },
+        {
+          "content": "الداخلية",
+          "polygon": [
+            351,
+            98,
+            388,
+            98,
+            388,
+            112,
+            351,
+            111
+          ],
+          "confidence": 0.247,
+          "span": {
+            "offset": 68,
+            "length": 8
+          }
+        },
+        {
+          "content": "أحمد",
+          "polygon": [
+            423,
+            119,
+            446,
+            119,
+            446,
+            134,
+            423,
+            134
+          ],
+          "confidence": 0.941,
+          "span": {
+            "offset": 78,
+            "length": 4
+          }
+        },
+        {
+          "content": "بن",
+          "polygon": [
+            407,
+            119,
+            420,
+            119,
+            420,
+            134,
+            407,
+            134
+          ],
+          "confidence": 0.993,
+          "span": {
+            "offset": 83,
+            "length": 2
+          }
+        },
+        {
+          "content": "عبدالرحمن",
+          "polygon": [
+            355,
+            119,
+            403,
+            119,
+            403,
+            134,
+            355,
+            134
+          ],
+          "confidence": 0.926,
+          "span": {
+            "offset": 86,
+            "length": 9
+          }
+        },
+        {
+          "content": "أحمد",
+          "polygon": [
+            328,
+            119,
+            352,
+            119,
+            352,
+            134,
+            328,
+            134
+          ],
+          "confidence": 0.784,
+          "span": {
+            "offset": 96,
+            "length": 4
+          }
+        },
+        {
+          "content": "AHMADI",
+          "polygon": [
+            125,
+            145,
+            164,
+            145,
+            164,
+            158,
+            125,
+            158
+          ],
+          "confidence": 0.637,
+          "span": {
+            "offset": 102,
+            "length": 6
+          }
+        },
+        {
+          "content": "ABDULRAHMAN",
+          "polygon": [
+            167,
+            145,
+            240,
+            145,
+            240,
+            158,
+            166,
+            158
+          ],
+          "confidence": 0.766,
+          "span": {
+            "offset": 109,
+            "length": 11
+          }
+        },
+        {
+          "content": "AHMAD",
+          "polygon": [
+            242,
+            146,
+            280,
+            146,
+            280,
+            158,
+            242,
+            158
+          ],
+          "confidence": 0.946,
+          "span": {
+            "offset": 121,
+            "length": 5
+          }
+        },
+        {
+          "content": "Ni:",
+          "polygon": [
+            238,
+            227,
+            253,
+            227,
+            253,
+            239,
+            238,
+            239
+          ],
+          "confidence": 0.207,
+          "span": {
+            "offset": 128,
+            "length": 3
+          }
+        },
+        {
+          "content": "1234567890",
+          "polygon": [
+            258,
+            227,
+            313,
+            227,
+            313,
+            239,
+            258,
+            239
+          ],
+          "confidence": 0.89,
+          "span": {
+            "offset": 132,
+            "length": 10
+          }
+        },
+        {
+          "content": "المرقم",
+          "polygon": [
+            409,
+            228,
+            465,
+            229,
+            465,
+            242,
+            409,
+            241
+          ],
+          "confidence": 0.578,
+          "span": {
+            "offset": 144,
+            "length": 6
+          }
+        },
+        {
+          "content": ":",
+          "polygon": [
+            399,
+            228,
+            404,
+            228,
+            404,
+            241,
+            399,
+            241
+          ],
+          "confidence": 0.891,
+          "span": {
+            "offset": 151,
+            "length": 1
+          }
+        },
+        {
+          "content": "٠١٢٣٤٥٦٧٨٩",
+          "polygon": [
+            328,
+            227,
+            391,
+            228,
+            391,
+            241,
+            328,
+            240
+          ],
+          "confidence": 0.814,
+          "span": {
+            "offset": 153,
+            "length": 10
+          }
+        },
+        {
+          "content": "DOR:",
+          "polygon": [
+            238,
+            247,
+            262,
+            247,
+            262,
+            258,
+            238,
+            258
+          ],
+          "confidence": 0.885,
+          "span": {
+            "offset": 165,
+            "length": 4
+          }
+        },
+        {
+          "content": "00/08/1909",
+          "polygon": [
+            266,
+            247,
+            315,
+            246,
+            315,
+            258,
+            266,
+            258
+          ],
+          "confidence": 0.833,
+          "span": {
+            "offset": 170,
+            "length": 10
+          }
+        },
+        {
+          "content": "تاريخ",
+          "polygon": [
+            441,
+            246,
+            465,
+            247,
+            465,
+            261,
+            441,
+            261
+          ],
+          "confidence": 0.987,
+          "span": {
+            "offset": 182,
+            "length": 5
+          }
+        },
+        {
+          "content": "الميلاد",
+          "polygon": [
+            415,
+            247,
+            438,
+            246,
+            438,
+            261,
+            415,
+            260
+          ],
+          "confidence": 0.291,
+          "span": {
+            "offset": 188,
+            "length": 7
+          }
+        },
+        {
+          "content": ":",
+          "polygon": [
+            399,
+            246,
+            403,
+            246,
+            403,
+            260,
+            399,
+            260
+          ],
+          "confidence": 0.877,
+          "span": {
+            "offset": 196,
+            "length": 1
+          }
+        },
+        {
+          "content": "١٤٠٠/٦٦/١٢",
+          "polygon": [
+            334,
+            246,
+            393,
+            246,
+            394,
+            260,
+            334,
+            259
+          ],
+          "confidence": 0.183,
+          "span": {
+            "offset": 198,
+            "length": 10
+          }
+        },
+        {
+          "content": "DOE:",
+          "polygon": [
+            237,
+            266,
+            262,
+            266,
+            262,
+            277,
+            237,
+            277
+          ],
+          "confidence": 0.944,
+          "span": {
+            "offset": 210,
+            "length": 4
+          }
+        },
+        {
+          "content": "01/08/2023",
+          "polygon": [
+            265,
+            266,
+            314,
+            266,
+            314,
+            277,
+            265,
+            277
+          ],
+          "confidence": 0.877,
+          "span": {
+            "offset": 215,
+            "length": 10
+          }
+        },
+        {
+          "content": "تاريخ",
+          "polygon": [
+            441,
+            265,
+            465,
+            265,
+            465,
+            280,
+            441,
+            279
+          ],
+          "confidence": 0.984,
+          "span": {
+            "offset": 227,
+            "length": 5
+          }
+        },
+        {
+          "content": "الانتهاء",
+          "polygon": [
+            407,
+            265,
+            438,
+            265,
+            438,
+            279,
+            407,
+            279
+          ],
+          "confidence": 0.917,
+          "span": {
+            "offset": 233,
+            "length": 8
+          }
+        },
+        {
+          "content": ":",
+          "polygon": [
+            399,
+            265,
+            403,
+            265,
+            403,
+            279,
+            399,
+            279
+          ],
+          "confidence": 0.877,
+          "span": {
+            "offset": 242,
+            "length": 1
+          }
+        },
+        {
+          "content": "١٤٤٠/١١/١٢",
+          "polygon": [
+            333,
+            265,
+            391,
+            265,
+            391,
+            279,
+            333,
+            279
+          ],
+          "confidence": 0.407,
+          "span": {
+            "offset": 244,
+            "length": 10
+          }
+        },
+        {
+          "content": "1234567690",
+          "polygon": [
+            140,
+            291,
+            202,
+            291,
+            202,
+            301,
+            140,
+            302
+          ],
+          "confidence": 0.992,
+          "span": {
+            "offset": 256,
+            "length": 10
+          }
+        },
+        {
+          "content": "مكان",
+          "polygon": [
+            442,
+            286,
+            464,
+            286,
+            464,
+            299,
+            442,
+            299
+          ],
+          "confidence": 0.991,
+          "span": {
+            "offset": 268,
+            "length": 4
+          }
+        },
+        {
+          "content": "الميلاد",
+          "polygon": [
+            416,
+            286,
+            439,
+            286,
+            439,
+            299,
+            417,
+            300
+          ],
+          "confidence": 0.515,
+          "span": {
+            "offset": 273,
+            "length": 7
+          }
+        },
+        {
+          "content": ":",
+          "polygon": [
+            398,
+            287,
+            403,
+            286,
+            403,
+            300,
+            398,
+            300
+          ],
+          "confidence": 0.916,
+          "span": {
+            "offset": 281,
+            "length": 1
+          }
+        },
+        {
+          "content": "الرياض",
+          "polygon": [
+            363,
+            287,
+            392,
+            287,
+            393,
+            300,
+            363,
+            301
+          ],
+          "confidence": 0.961,
+          "span": {
+            "offset": 283,
+            "length": 6
+          }
+        },
+        {
+          "content": "Kisądem",
+          "polygon": [
+            126,
+            435,
+            170,
+            435,
+            170,
+            447,
+            126,
+            446
+          ],
+          "confidence": 0.378,
+          "span": {
+            "offset": 313,
+            "length": 7
+          }
+        },
+        {
+          "content": "of",
+          "polygon": [
+            174,
+            435,
+            184,
+            435,
+            184,
+            447,
+            174,
+            446
+          ],
+          "confidence": 0.619,
+          "span": {
+            "offset": 321,
+            "length": 2
+          }
+        },
+        {
+          "content": "Saudi",
+          "polygon": [
+            187,
+            435,
+            214,
+            435,
+            214,
+            446,
+            187,
+            447
+          ],
+          "confidence": 0.582,
+          "span": {
+            "offset": 324,
+            "length": 5
+          }
+        },
+        {
+          "content": "Arabia",
+          "polygon": [
+            217,
+            435,
+            251,
+            435,
+            251,
+            446,
+            217,
+            446
+          ],
+          "confidence": 0.636,
+          "span": {
+            "offset": 330,
+            "length": 6
+          }
+        },
+        {
+          "content": "Ministry",
+          "polygon": [
+            138,
+            447,
+            180,
+            447,
+            180,
+            458,
+            138,
+            457
+          ],
+          "confidence": 0.619,
+          "span": {
+            "offset": 337,
+            "length": 8
+          }
+        },
+        {
+          "content": "of",
+          "polygon": [
+            184,
+            447,
+            194,
+            447,
+            194,
+            458,
+            184,
+            458
+          ],
+          "confidence": 0.153,
+          "span": {
+            "offset": 346,
+            "length": 2
+          }
+        },
+        {
+          "content": "Intenor",
+          "polygon": [
+            198,
+            447,
+            240,
+            447,
+            240,
+            458,
+            198,
+            458
+          ],
+          "confidence": 0.64,
+          "span": {
+            "offset": 349,
+            "length": 7
+          }
+        },
+        {
+          "content": "National",
+          "polygon": [
+            320,
+            442,
+            362,
+            442,
+            362,
+            453,
+            320,
+            453
+          ],
+          "confidence": 0.646,
+          "span": {
+            "offset": 358,
+            "length": 8
+          }
+        },
+        {
+          "content": "ID",
+          "polygon": [
+            366,
+            442,
+            376,
+            442,
+            376,
+            453,
+            366,
+            453
+          ],
+          "confidence": 0.864,
+          "span": {
+            "offset": 367,
+            "length": 2
+          }
+        },
+        {
+          "content": "Cardf",
+          "polygon": [
+            379,
+            442,
+            403,
+            442,
+            403,
+            453,
+            379,
+            453
+          ],
+          "confidence": 0.593,
+          "span": {
+            "offset": 370,
+            "length": 5
+          }
+        },
+        {
+          "content": "-",
+          "polygon": [
+            372,
+            503,
+            392,
+            503,
+            391,
+            510,
+            372,
+            510
+          ],
+          "confidence": 0.979,
+          "span": {
+            "offset": 377,
+            "length": 2
+          }
+        },
+        {
+          "content": "123-1568590",
+          "polygon": [
+            355,
+            509,
+            408,
+            509,
+            408,
+            518,
+            355,
+            519
+          ],
+          "confidence": 0.586,
+          "span": {
+            "offset": 380,
+            "length": 11
+          }
+        },
+        {
+          "content": "SN",
+          "polygon": [
+            312,
+            545,
+            326,
+            545,
+            326,
+            555,
+            312,
+            555
+          ],
+          "confidence": 0.713,
+          "span": {
+            "offset": 393,
+            "length": 2
+          }
+        },
+        {
+          "content": "11223344555677",
+          "polygon": [
+            331,
+            544,
+            403,
+            544,
+            403,
+            555,
+            331,
+            555
+          ],
+          "confidence": 0.696,
+          "span": {
+            "offset": 396,
+            "length": 14
+          }
+        },
+        {
+          "content": "IDSAU123456789<0017<11111",
+          "polygon": [
+            125,
+            598,
+            402,
+            598,
+            402,
+            613,
+            125,
+            613
+          ],
+          "confidence": 0.938,
+          "span": {
+            "offset": 412,
+            "length": 25
+          }
+        },
+        {
+          "content": "<<<<",
+          "polygon": [
+            407,
+            598,
+            451,
+            598,
+            451,
+            613,
+            407,
+            613
+          ],
+          "confidence": 0.987,
+          "span": {
+            "offset": 438,
+            "length": 4
+          }
+        },
+        {
+          "content": "6908061M2308010SAU<1",
+          "polygon": [
+            124,
+            616,
+            346,
+            616,
+            346,
+            632,
+            124,
+            632
+          ],
+          "confidence": 0.973,
+          "span": {
+            "offset": 443,
+            "length": 20
+          }
+        },
+        {
+          "content": "<<<<<<<<",
+          "polygon": [
+            350,
+            616,
+            437,
+            616,
+            437,
+            632,
+            350,
+            632
+          ],
+          "confidence": 0.828,
+          "span": {
+            "offset": 464,
+            "length": 8
+          }
+        },
+        {
+          "content": "6",
+          "polygon": [
+            440,
+            616,
+            450,
+            616,
+            450,
+            632,
+            440,
+            632
+          ],
+          "confidence": 0.992,
+          "span": {
+            "offset": 473,
+            "length": 1
+          }
+        },
+        {
+          "content": "AHMAD",
+          "polygon": [
+            122,
+            635,
+            185,
+            634,
+            185,
+            651,
+            122,
+            651
+          ],
+          "confidence": 0.997,
+          "span": {
+            "offset": 475,
+            "length": 5
+          }
+        },
+        {
+          "content": "<<<",
+          "polygon": [
+            193,
+            634,
+            221,
+            634,
+            221,
+            651,
+            193,
+            651
+          ],
+          "confidence": 0.989,
+          "span": {
+            "offset": 481,
+            "length": 3
+          }
+        },
+        {
+          "content": "ABDULRAHMAN",
+          "polygon": [
+            226,
+            634,
+            360,
+            634,
+            360,
+            651,
+            226,
+            651
+          ],
+          "confidence": 0.992,
+          "span": {
+            "offset": 485,
+            "length": 11
+          }
+        },
+        {
+          "content": "<<",
+          "polygon": [
+            364,
+            634,
+            382,
+            635,
+            382,
+            651,
+            364,
+            651
+          ],
+          "confidence": 0.991,
+          "span": {
+            "offset": 497,
+            "length": 2
+          }
+        },
+        {
+          "content": "AHMAD",
+          "polygon": [
+            386,
+            635,
+            449,
+            634,
+            449,
+            651,
+            386,
+            651
+          ],
+          "confidence": 0.994,
+          "span": {
+            "offset": 500,
+            "length": 5
+          }
+        }
+      ],
+      "lines": [
+        {
+          "content": "الهوية الوطنية",
+          "polygon": [
+            147,
+            83,
+            222,
+            83,
+            222,
+            98,
+            147,
+            98
+          ],
+          "spans": [
+            {
+              "offset": 10,
+              "length": 14
+            }
+          ]
+        },
+        {
+          "content": "رقم الدخل.",
+          "polygon": [
+            144,
+            97,
+            214,
+            98,
+            213,
+            112,
+            144,
+            111
+          ],
+          "spans": [
+            {
+              "offset": 25,
+              "length": 10
+            }
+          ]
+        },
+        {
+          "content": "المملكة العربية السعودية",
+          "polygon": [
+            321,
+            82,
+            448,
+            82,
+            448,
+            97,
+            321,
+            97
+          ],
+          "spans": [
+            {
+              "offset": 37,
+              "length": 24
+            }
+          ]
+        },
+        {
+          "content": "وعادة الداخلية",
+          "polygon": [
+            351,
+            97,
+            419,
+            98,
+            418,
+            112,
+            350,
+            111
+          ],
+          "spans": [
+            {
+              "offset": 62,
+              "length": 14
+            }
+          ]
+        },
+        {
+          "content": "أحمد بن عبدالرحمن أحمد",
+          "polygon": [
+            328,
+            119,
+            445,
+            119,
+            445,
+            134,
+            328,
+            134
+          ],
+          "spans": [
+            {
+              "offset": 78,
+              "length": 22
+            }
+          ]
+        },
+        {
+          "content": "AHMADI ABDULRAHMAN AHMAD",
+          "polygon": [
+            125,
+            145,
+            280,
+            145,
+            280,
+            158,
+            125,
+            158
+          ],
+          "spans": [
+            {
+              "offset": 102,
+              "length": 24
+            }
+          ]
+        },
+        {
+          "content": "Ni: 1234567890",
+          "polygon": [
+            238,
+            227,
+            313,
+            227,
+            313,
+            239,
+            238,
+            239
+          ],
+          "spans": [
+            {
+              "offset": 128,
+              "length": 14
+            }
+          ]
+        },
+        {
+          "content": "المرقم : ٠١٢٣٤٥٦٧٨٩",
+          "polygon": [
+            328,
+            227,
+            464,
+            229,
+            464,
+            242,
+            328,
+            240
+          ],
+          "spans": [
+            {
+              "offset": 144,
+              "length": 19
+            }
+          ]
+        },
+        {
+          "content": "DOR: 00/08/1909",
+          "polygon": [
+            238,
+            247,
+            314,
+            246,
+            314,
+            257,
+            238,
+            258
+          ],
+          "spans": [
+            {
+              "offset": 165,
+              "length": 15
+            }
+          ]
+        },
+        {
+          "content": "تاريخ الميلاد : ١٤٠٠/٦٦/١٢",
+          "polygon": [
+            334,
+            246,
+            464,
+            247,
+            464,
+            261,
+            333,
+            260
+          ],
+          "spans": [
+            {
+              "offset": 182,
+              "length": 26
+            }
+          ]
+        },
+        {
+          "content": "DOE: 01/08/2023",
+          "polygon": [
+            237,
+            266,
+            314,
+            266,
+            314,
+            276,
+            237,
+            277
+          ],
+          "spans": [
+            {
+              "offset": 210,
+              "length": 15
+            }
+          ]
+        },
+        {
+          "content": "تاريخ الانتهاء : ١٤٤٠/١١/١٢",
+          "polygon": [
+            333,
+            265,
+            464,
+            265,
+            464,
+            279,
+            333,
+            279
+          ],
+          "spans": [
+            {
+              "offset": 227,
+              "length": 27
+            }
+          ]
+        },
+        {
+          "content": "1234567690",
+          "polygon": [
+            140,
+            291,
+            201,
+            291,
+            201,
+            301,
+            140,
+            301
+          ],
+          "spans": [
+            {
+              "offset": 256,
+              "length": 10
+            }
+          ]
+        },
+        {
+          "content": "مكان الميلاد : الرياض",
+          "polygon": [
+            363,
+            287,
+            464,
+            285,
+            464,
+            299,
+            363,
+            301
+          ],
+          "spans": [
+            {
+              "offset": 268,
+              "length": 21
+            }
+          ]
+        },
+        {
+          "content": "Kisądem of Saudi Arabia",
+          "polygon": [
+            126,
+            435,
+            250,
+            435,
+            250,
+            446,
+            126,
+            446
+          ],
+          "spans": [
+            {
+              "offset": 313,
+              "length": 23
+            }
+          ]
+        },
+        {
+          "content": "Ministry of Intenor",
+          "polygon": [
+            138,
+            447,
+            240,
+            447,
+            240,
+            458,
+            138,
+            457
+          ],
+          "spans": [
+            {
+              "offset": 337,
+              "length": 19
+            }
+          ]
+        },
+        {
+          "content": "National ID Cardf",
+          "polygon": [
+            320,
+            442,
+            403,
+            442,
+            403,
+            453,
+            320,
+            453
+          ],
+          "spans": [
+            {
+              "offset": 358,
+              "length": 17
+            }
+          ]
+        },
+        {
+          "content": "-",
+          "polygon": [
+            372,
+            503,
+            391,
+            503,
+            391,
+            510,
+            372,
+            510
+          ],
+          "spans": [
+            {
+              "offset": 377,
+              "length": 2
+            }
+          ]
+        },
+        {
+          "content": "123-1568590",
+          "polygon": [
+            355,
+            509,
+            408,
+            508,
+            408,
+            518,
+            355,
+            519
+          ],
+          "spans": [
+            {
+              "offset": 380,
+              "length": 11
+            }
+          ]
+        },
+        {
+          "content": "SN 11223344555677",
+          "polygon": [
+            311,
+            544,
+            402,
+            544,
+            402,
+            555,
+            312,
+            555
+          ],
+          "spans": [
+            {
+              "offset": 393,
+              "length": 17
+            }
+          ]
+        },
+        {
+          "content": "IDSAU123456789<0017<11111 <<<<",
+          "polygon": [
+            125,
+            597,
+            451,
+            597,
+            451,
+            613,
+            125,
+            613
+          ],
+          "spans": [
+            {
+              "offset": 412,
+              "length": 30
+            }
+          ]
+        },
+        {
+          "content": "6908061M2308010SAU<1 <<<<<<<< 6",
+          "polygon": [
+            124,
+            615,
+            450,
+            615,
+            450,
+            632,
+            124,
+            632
+          ],
+          "spans": [
+            {
+              "offset": 443,
+              "length": 31
+            }
+          ]
+        },
+        {
+          "content": "AHMAD <<< ABDULRAHMAN << AHMAD",
+          "polygon": [
+            122,
+            634,
+            448,
+            634,
+            448,
+            651,
+            122,
+            651
+          ],
+          "spans": [
+            {
+              "offset": 475,
+              "length": 30
+            }
+          ]
+        }
+      ],
+      "spans": [
+        {
+          "offset": 0,
+          "length": 517
+        }
+      ]
+    }
+  ],
+  "paragraphs": [
+    {
+      "spans": [
+        {
+          "offset": 10,
+          "length": 25
+        }
+      ],
+      "boundingRegions": [
+        {
+          "pageNumber": 1,
+          "polygon": [
+            144,
+            83,
+            222,
+            83,
+            222,
+            112,
+            144,
+            112
+          ]
+        }
+      ],
+      "content": "الهوية الوطنية رقم الدخل."
+    },
+    {
+      "spans": [
+        {
+          "offset": 37,
+          "length": 39
+        }
+      ],
+      "boundingRegions": [
+        {
+          "pageNumber": 1,
+          "polygon": [
+            321,
+            82,
+            448,
+            82,
+            448,
+            112,
+            322,
+            112
+          ]
+        }
+      ],
+      "content": "المملكة العربية السعودية وعادة الداخلية"
+    },
+    {
+      "spans": [
+        {
+          "offset": 78,
+          "length": 22
+        }
+      ],
+      "boundingRegions": [
+        {
+          "pageNumber": 1,
+          "polygon": [
+            328,
+            119,
+            445,
+            119,
+            445,
+            134,
+            328,
+            134
+          ]
+        }
+      ],
+      "content": "أحمد بن عبدالرحمن أحمد"
+    },
+    {
+      "spans": [
+        {
+          "offset": 102,
+          "length": 24
+        }
+      ],
+      "boundingRegions": [
+        {
+          "pageNumber": 1,
+          "polygon": [
+            125,
+            145,
+            280,
+            145,
+            280,
+            158,
+            125,
+            158
+          ]
+        }
+      ],
+      "content": "AHMADI ABDULRAHMAN AHMAD"
+    },
+    {
+      "spans": [
+        {
+          "offset": 128,
+          "length": 14
+        }
+      ],
+      "boundingRegions": [
+        {
+          "pageNumber": 1,
+          "polygon": [
+            238,
+            227,
+            313,
+            227,
+            313,
+            239,
+            238,
+            239
+          ]
+        }
+      ],
+      "content": "Ni: 1234567890"
+    },
+    {
+      "spans": [
+        {
+          "offset": 144,
+          "length": 19
+        }
+      ],
+      "boundingRegions": [
+        {
+          "pageNumber": 1,
+          "polygon": [
+            328,
+            227,
+            464,
+            229,
+            464,
+            242,
+            328,
+            240
+          ]
+        }
+      ],
+      "content": "المرقم : ٠١٢٣٤٥٦٧٨٩"
+    },
+    {
+      "spans": [
+        {
+          "offset": 165,
+          "length": 15
+        }
+      ],
+      "boundingRegions": [
+        {
+          "pageNumber": 1,
+          "polygon": [
+            238,
+            247,
+            314,
+            246,
+            314,
+            257,
+            238,
+            258
+          ]
+        }
+      ],
+      "content": "DOR: 00/08/1909"
+    },
+    {
+      "spans": [
+        {
+          "offset": 182,
+          "length": 26
+        }
+      ],
+      "boundingRegions": [
+        {
+          "pageNumber": 1,
+          "polygon": [
+            334,
+            246,
+            464,
+            247,
+            464,
+            261,
+            333,
+            260
+          ]
+        }
+      ],
+      "content": "تاريخ الميلاد : ١٤٠٠/٦٦/١٢"
+    },
+    {
+      "spans": [
+        {
+          "offset": 210,
+          "length": 15
+        }
+      ],
+      "boundingRegions": [
+        {
+          "pageNumber": 1,
+          "polygon": [
+            237,
+            266,
+            314,
+            266,
+            314,
+            276,
+            237,
+            277
+          ]
+        }
+      ],
+      "content": "DOE: 01/08/2023"
+    },
+    {
+      "spans": [
+        {
+          "offset": 227,
+          "length": 27
+        }
+      ],
+      "boundingRegions": [
+        {
+          "pageNumber": 1,
+          "polygon": [
+            333,
+            265,
+            464,
+            265,
+            464,
+            279,
+            333,
+            279
+          ]
+        }
+      ],
+      "content": "تاريخ الانتهاء : ١٤٤٠/١١/١٢"
+    },
+    {
+      "spans": [
+        {
+          "offset": 256,
+          "length": 10
+        }
+      ],
+      "boundingRegions": [
+        {
+          "pageNumber": 1,
+          "polygon": [
+            140,
+            291,
+            201,
+            291,
+            201,
+            301,
+            140,
+            301
+          ]
+        }
+      ],
+      "content": "1234567690"
+    },
+    {
+      "spans": [
+        {
+          "offset": 268,
+          "length": 21
+        }
+      ],
+      "boundingRegions": [
+        {
+          "pageNumber": 1,
+          "polygon": [
+            363,
+            287,
+            464,
+            285,
+            464,
+            299,
+            363,
+            301
+          ]
+        }
+      ],
+      "content": "مكان الميلاد : الرياض"
+    },
+    {
+      "spans": [
+        {
+          "offset": 313,
+          "length": 43
+        }
+      ],
+      "boundingRegions": [
+        {
+          "pageNumber": 1,
+          "polygon": [
+            126,
+            435,
+            250,
+            435,
+            250,
+            458,
+            126,
+            458
+          ]
+        }
+      ],
+      "content": "Kisądem of Saudi Arabia Ministry of Intenor"
+    },
+    {
+      "spans": [
+        {
+          "offset": 358,
+          "length": 17
+        }
+      ],
+      "boundingRegions": [
+        {
+          "pageNumber": 1,
+          "polygon": [
+            320,
+            442,
+            403,
+            442,
+            403,
+            453,
+            320,
+            453
+          ]
+        }
+      ],
+      "content": "National ID Cardf"
+    },
+    {
+      "spans": [
+        {
+          "offset": 377,
+          "length": 14
+        }
+      ],
+      "boundingRegions": [
+        {
+          "pageNumber": 1,
+          "polygon": [
+            355,
+            503,
+            408,
+            503,
+            408,
+            518,
+            355,
+            519
+          ]
+        }
+      ],
+      "content": "- 123-1568590"
+    },
+    {
+      "spans": [
+        {
+          "offset": 393,
+          "length": 17
+        }
+      ],
+      "boundingRegions": [
+        {
+          "pageNumber": 1,
+          "polygon": [
+            311,
+            544,
+            402,
+            544,
+            402,
+            555,
+            312,
+            555
+          ]
+        }
+      ],
+      "content": "SN 11223344555677"
+    },
+    {
+      "spans": [
+        {
+          "offset": 412,
+          "length": 93
+        }
+      ],
+      "boundingRegions": [
+        {
+          "pageNumber": 1,
+          "polygon": [
+            122,
+            597,
+            451,
+            597,
+            451,
+            651,
+            122,
+            651
+          ]
+        }
+      ],
+      "content": "IDSAU123456789<0017<11111 <<<< 6908061M2308010SAU<1 <<<<<<<< 6 AHMAD <<< ABDULRAHMAN << AHMAD"
+    }
+  ],
+  "keyValuePairs": [
+    {
+      "key": {
+        "content": "Ni:",
+        "boundingRegions": [
+          {
+            "pageNumber": 1,
+            "polygon": [
+              238,
+              227,
+              253,
+              227,
+              253,
+              239,
+              238,
+              239
+            ]
+          }
+        ],
+        "spans": [
+          {
+            "offset": 128,
+            "length": 3
+          }
+        ]
+      },
+      "value": {
+        "content": "1234567890",
+        "boundingRegions": [
+          {
+            "pageNumber": 1,
+            "polygon": [
+              258,
+              227,
+              313,
+              227,
+              313,
+              239,
+              258,
+              239
+            ]
+          }
+        ],
+        "spans": [
+          {
+            "offset": 132,
+            "length": 10
+          }
+        ]
+      },
+      "confidence": 0.774
+    },
+    {
+      "key": {
+        "content": "المرقم :",
+        "boundingRegions": [
+          {
+            "pageNumber": 1,
+            "polygon": [
+              399,
+              228,
+              465,
+              228,
+              465,
+              242,
+              399,
+              241
+            ]
+          }
+        ],
+        "spans": [
+          {
+            "offset": 144,
+            "length": 8
+          }
+        ]
+      },
+      "value": {
+        "content": "٠١٢٣٤٥٦٧٨٩",
+        "boundingRegions": [
+          {
+            "pageNumber": 1,
+            "polygon": [
+              328,
+              227,
+              391,
+              228,
+              391,
+              241,
+              328,
+              240
+            ]
+          }
+        ],
+        "spans": [
+          {
+            "offset": 153,
+            "length": 10
+          }
+        ]
+      },
+      "confidence": 0.879
+    },
+    {
+      "key": {
+        "content": "DOR:",
+        "boundingRegions": [
+          {
+            "pageNumber": 1,
+            "polygon": [
+              238,
+              247,
+              262,
+              247,
+              262,
+              258,
+              238,
+              258
+            ]
+          }
+        ],
+        "spans": [
+          {
+            "offset": 165,
+            "length": 4
+          }
+        ]
+      },
+      "value": {
+        "content": "00/08/1909",
+        "boundingRegions": [
+          {
+            "pageNumber": 1,
+            "polygon": [
+              266,
+              247,
+              315,
+              246,
+              315,
+              258,
+              266,
+              258
+            ]
+          }
+        ],
+        "spans": [
+          {
+            "offset": 170,
+            "length": 10
+          }
+        ]
+      },
+      "confidence": 0.929
+    },
+    {
+      "key": {
+        "content": "تاريخ الميلاد :",
+        "boundingRegions": [
+          {
+            "pageNumber": 1,
+            "polygon": [
+              399,
+              246,
+              465,
+              247,
+              465,
+              261,
+              399,
+              261
+            ]
+          }
+        ],
+        "spans": [
+          {
+            "offset": 182,
+            "length": 15
+          }
+        ]
+      },
+      "value": {
+        "content": "١٤٠٠/٦٦/١٢",
+        "boundingRegions": [
+          {
+            "pageNumber": 1,
+            "polygon": [
+              334,
+              246,
+              394,
+              246,
+              394,
+              260,
+              333,
+              260
+            ]
+          }
+        ],
+        "spans": [
+          {
+            "offset": 198,
+            "length": 10
+          }
+        ]
+      },
+      "confidence": 0.791
+    },
+    {
+      "key": {
+        "content": "DOE:",
+        "boundingRegions": [
+          {
+            "pageNumber": 1,
+            "polygon": [
+              237,
+              266,
+              262,
+              266,
+              262,
+              277,
+              237,
+              277
+            ]
+          }
+        ],
+        "spans": [
+          {
+            "offset": 210,
+            "length": 4
+          }
+        ]
+      },
+      "value": {
+        "content": "01/08/2023",
+        "boundingRegions": [
+          {
+            "pageNumber": 1,
+            "polygon": [
+              265,
+              266,
+              314,
+              266,
+              314,
+              277,
+              265,
+              277
+            ]
+          }
+        ],
+        "spans": [
+          {
+            "offset": 215,
+            "length": 10
+          }
+        ]
+      },
+      "confidence": 0.955
+    },
+    {
+      "key": {
+        "content": "تاريخ الانتهاء :",
+        "boundingRegions": [
+          {
+            "pageNumber": 1,
+            "polygon": [
+              399,
+              265,
+              465,
+              265,
+              465,
+              280,
+              399,
+              279
+            ]
+          }
+        ],
+        "spans": [
+          {
+            "offset": 227,
+            "length": 16
+          }
+        ]
+      },
+      "value": {
+        "content": "١٤٤٠/١١/١٢",
+        "boundingRegions": [
+          {
+            "pageNumber": 1,
+            "polygon": [
+              333,
+              265,
+              391,
+              265,
+              391,
+              279,
+              333,
+              279
+            ]
+          }
+        ],
+        "spans": [
+          {
+            "offset": 244,
+            "length": 10
+          }
+        ]
+      },
+      "confidence": 0.896
+    },
+    {
+      "key": {
+        "content": "مكان الميلاد :",
+        "boundingRegions": [
+          {
+            "pageNumber": 1,
+            "polygon": [
+              398,
+              286,
+              464,
+              286,
+              464,
+              300,
+              398,
+              300
+            ]
+          }
+        ],
+        "spans": [
+          {
+            "offset": 268,
+            "length": 14
+          }
+        ]
+      },
+      "value": {
+        "content": "الرياض",
+        "boundingRegions": [
+          {
+            "pageNumber": 1,
+            "polygon": [
+              363,
+              287,
+              392,
+              286,
+              393,
+              300,
+              363,
+              301
+            ]
+          }
+        ],
+        "spans": [
+          {
+            "offset": 283,
+            "length": 6
+          }
+        ]
+      },
+      "confidence": 0.915
+    }
+  ],
+  "contentFormat": "markdown",
+  "sections": [
+    {
+      "spans": [
+        {
+          "offset": 0,
+          "length": 516
+        }
+      ],
+      "elements": [
+        "/figures/0",
+        "/figures/1"
+      ]
+    }
+  ],
+  "figures": [
+    {
+      "id": "1.1",
+      "boundingRegions": [
+        {
+          "pageNumber": 1,
+          "polygon": [
+            97,
+            75,
+            472,
+            75,
+            472,
+            313,
+            96,
+            313
+          ]
+        }
+      ],
+      "spans": [
+        {
+          "offset": 0,
+          "length": 300
+        }
+      ],
+      "elements": [
+        "/paragraphs/0",
+        "/paragraphs/1",
+        "/paragraphs/2",
+        "/paragraphs/3",
+        "/paragraphs/4",
+        "/paragraphs/5",
+        "/paragraphs/6",
+        "/paragraphs/7",
+        "/paragraphs/8",
+        "/paragraphs/9",
+        "/paragraphs/10",
+        "/paragraphs/11"
+      ]
+    },
+    {
+      "id": "1.2",
+      "boundingRegions": [
+        {
+          "pageNumber": 1,
+          "polygon": [
+            96,
+            423,
+            473,
+            423,
+            473,
+            663,
+            95,
+            663
+          ]
+        }
+      ],
+      "spans": [
+        {
+          "offset": 303,
+          "length": 213
+        }
+      ],
+      "elements": [
+        "/paragraphs/12",
+        "/paragraphs/13",
+        "/paragraphs/14",
+        "/paragraphs/15",
+        "/paragraphs/16"
+      ]
+    }
+  ]
+}
