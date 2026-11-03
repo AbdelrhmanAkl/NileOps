@@ -8,3 +8,4 @@ httpx
 pytest
 PyJWT>=2.10,<3
 pwdlib[argon2]>=0.2,<1
+openai>=3.42.1
