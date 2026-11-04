@@ -11,6 +11,8 @@ from sqlalchemy.orm import Session, selectinload
 from src.api.auth import router as auth_router
 from src.api.banking import router as banking_router
 from src.api.complaints import router as complaints_router
+from src.api.dashboard import router as dashboard_router
+from src.api.dashboard import web_router as dashboard_web_router
 from src.api.documents import router as documents_router
 from src.api.explanations import router as explanations_router
 from src.api.policies import router as policies_router
@@ -44,6 +46,8 @@ app.include_router(auth_router)
 app.include_router(banking_router)
 app.include_router(complaints_router)
 app.include_router(documents_router)
+app.include_router(dashboard_router)
+app.include_router(dashboard_web_router)
 app.include_router(explanations_router)
 app.include_router(policies_router)
 

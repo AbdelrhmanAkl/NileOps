@@ -93,14 +93,17 @@ def build_application_facts(db: Session, application: KYCApplication) -> Explain
             missing_or_unverified = True
         elif doc_status == DocumentStatus.UNDER_REVIEW.value:
             out.facts.append(Fact("DOC_PENDING", f"فحص المستند «{doc_type}» لم يكتمل بعد."))
+            out.next_steps.append(f"أكمل فحص «{doc_type}» قبل أي قرار.")
             missing_or_unverified = True
         elif doc_status == DocumentStatus.UPLOADED.value:
             out.facts.append(Fact("DOC_UNVERIFIED", f"المستند «{doc_type}» مرفق لكن لم يُتحقق من محتواه بعد."))
+            out.next_steps.append(f"تحقق من محتوى «{doc_type}» قبل أي قرار.")
             missing_or_unverified = True
         elif doc_status == DocumentStatus.VALID.value:
             out.facts.append(Fact("DOC_VALID", f"المستند «{doc_type}» مستوفٍ مبدئيًا، وهذا لا يثبت اكتمال كل الضوابط."))
         else:
             out.facts.append(Fact("DOC_UNKNOWN", f"حالة المستند «{doc_type}» غير معروفة للنظام."))
+            out.next_steps.append(f"افحص «{doc_type}» بنفسك لأن حالته غير معروفة.")
             missing_or_unverified = True
 
         if document is not None:

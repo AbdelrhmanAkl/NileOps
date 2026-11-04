@@ -191,6 +191,8 @@ def test_application_explanation_is_built_from_system_facts(ctx):
     assert "قرار بشري سابق" in text and "المراجع البشري وحده" in text
     assert any("استكمال «إثبات العنوان»" in s for s in body["next_steps"])
     assert any("المعلَّمة (الرقم القومي)" in s for s in body["next_steps"])
+    # every unverified document gets a concrete next step (an empty list confused users)
+    assert any("تحقق من محتوى «استمارة بيانات العميل»" in s for s in body["next_steps"])
     assert body["advisory"]
 
 
