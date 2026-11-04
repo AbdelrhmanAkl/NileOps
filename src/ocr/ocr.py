@@ -7,11 +7,8 @@ from pathlib import Path
 from typing import Any
 from dotenv import load_dotenv
 from openai import OpenAI
-
-
-from schemas import FrontIdData
-from prompt import EXTRACT_FRONT_ID_DATA
-
+from schemas import BackIdData, FrontIdData
+from prompt import EXTRACT_BACK_ID_DATA, EXTRACT_FRONT_ID_DATA
 
 load_dotenv()
 
@@ -80,6 +77,7 @@ class OCR:
                 },
             ],
         )
+        print(response.choices[0].message.content)
         return response.choices[0].message.content or ""
 
     @staticmethod
@@ -133,6 +131,61 @@ class OCR:
             return False
 
         return nid_year == dob_year and nid_month == dob_month and nid_day == dob_day
+
+    @staticmethod
+    def verify_back_id_data(
+        nid: int | str | None,
+        gender: str | None,
+        expire_date: str | None = None,
+    ) -> bool:
+        """Verifies back ID data consistency:
+        - 14-digit NID is valid (proper length and century digit).
+        - Digit 13 of NID matches gender (odd = male, even = female).
+        - Expiration date is a valid calendar date (if present).
+        """
+        if not nid or not gender:
+            return False
+
+        arabic_to_ascii = str.maketrans("٠١٢٣٤٥٦٧٨٩", "0123456789")
+        nid_str = re.sub(r"\D", "", str(nid).translate(arabic_to_ascii))
+        if len(nid_str) != 14:
+            return False
+
+        # Validate century digit
+        if nid_str[0] not in ("2", "3"):
+            return False
+
+        # 13th digit (0-indexed index 12) encodes gender
+        gender_digit = int(nid_str[12])
+        is_male_digit = (gender_digit % 2 != 0)
+        is_female_digit = (gender_digit % 2 == 0)
+
+        gender_clean = gender.strip()
+        gender_matches = False
+        if "ذكر" in gender_clean or "male" in gender_clean.lower():
+            gender_matches = is_male_digit
+        elif "أنثى" in gender_clean or "انثى" in gender_clean or "female" in gender_clean.lower():
+            gender_matches = is_female_digit
+
+        if not gender_matches:
+            return False
+
+        # If expire_date is present, verify it represents a valid calendar date
+        if expire_date:
+            exp_str = str(expire_date).translate(arabic_to_ascii)
+            exp_numbers = [int(n) for n in re.findall(r"\d+", exp_str)]
+            if len(exp_numbers) == 3:
+                try:
+                    if exp_numbers[0] >= 1900:
+                        date(exp_numbers[0], exp_numbers[1], exp_numbers[2])
+                    elif exp_numbers[2] >= 1900:
+                        date(exp_numbers[2], exp_numbers[1], exp_numbers[0])
+                    else:
+                        return False
+                except ValueError:
+                    return False
+
+        return True
 
     def extract_and_verify_front_id(
         self,
@@ -213,11 +266,94 @@ class OCR:
             "data": data,
         }
 
+    def extract_and_verify_back_id(
+        self,
+        image: bytes | str | Path,
+        mime_type: str | None = None,
+    ) -> dict[str, Any]:
+        """Extracts information from the back side of the national ID card and verifies the NID against gender.
+
+        Returns:
+            dict: {
+                "verified": bool,
+                "data": dict
+            }
+        """
+        extracted_text = self.extract_text(image, mime_type)
+        data: dict[str, Any] = {}
+
+        # 1. Attempt using OpenAI structured output parser
+        try:
+            completion = self.client.beta.chat.completions.parse(
+                model=self.model,
+                messages=[
+                    {"role": "system", "content": EXTRACT_BACK_ID_DATA},
+                    {"role": "user", "content": f"OCR Extracted Text:\n{extracted_text}"},
+                ],
+                response_format=BackIdData,
+            )
+            parsed = completion.choices[0].message.parsed
+            if parsed is not None:
+                data = parsed.model_dump()
+        except Exception:
+            pass
+
+        # 2. Fallback to standard chat completions if beta.parse fails
+        if not data:
+            try:
+                response = self.client.chat.completions.create(
+                    model=self.model,
+                    messages=[
+                        {"role": "system", "content": EXTRACT_BACK_ID_DATA},
+                        {"role": "user", "content": f"OCR Extracted Text:\n{extracted_text}"},
+                    ],
+                    response_format={"type": "json_object"},
+                )
+                raw_content = response.choices[0].message.content or "{}"
+            except Exception:
+                response = self.client.chat.completions.create(
+                    model=self.model,
+                    messages=[
+                        {"role": "system", "content": EXTRACT_BACK_ID_DATA},
+                        {"role": "user", "content": f"OCR Extracted Text:\n{extracted_text}"},
+                    ],
+                )
+                raw_content = response.choices[0].message.content or "{}"
+
+            cleaned = raw_content.strip()
+            if cleaned.startswith("```"):
+                lines = cleaned.splitlines()
+                if lines and lines[0].startswith("```"):
+                    lines = lines[1:]
+                if lines and lines[-1].strip() == "```":
+                    lines = lines[:-1]
+                cleaned = "\n".join(lines).strip()
+
+            try:
+                data = BackIdData.model_validate_json(cleaned).model_dump()
+            except Exception:
+                import json
+                try:
+                    data = json.loads(cleaned)
+                except Exception:
+                    data = {"raw_text": extracted_text}
+
+        verified = self.verify_back_id_data(
+            nid=data.get("nid"),
+            gender=data.get("gender"),
+            expire_date=data.get("expire_date"),
+        )
+
+        return {
+            "verified": verified,
+            "data": data,
+        }
+
 
 if __name__ == '__main__':
     ocr = OCR()
 
-    res = ocr.extract_and_verify_front_id('./test_images/sab.jpg')
+    res = ocr.extract_and_verify_back_id('./test_images/back2.jpg')
     print("=" * 50)
     print(res)
     print("=" * 50)

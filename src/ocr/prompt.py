@@ -32,3 +32,73 @@ Return ONLY a valid JSON object matching the following structure:
   "location": "العنوان بالكامل"
 }
 """
+
+EXTRACT_BACK_ID_DATA = """You are an expert OCR data extraction assistant specialized in extracting structured information from Egyptian National ID cards (بطاقة الرقم القومي المصرية - الوجه الخلفي).
+
+Your task is to extract the cardholder's data from the raw OCR text of the back of the ID card and return it as a clean, valid JSON object.
+
+### Fields to Extract:
+1. **National ID (`nid`)**:
+   - The 14-digit national ID number.
+   - It is typically located at the top (often on the same line or adjacent to an issue date like "YYYY/MM" e.g., "٢٠١٢/٠٣ ٢٩٣٥٤٠١٠١٠٢٣٢٠").
+   - Extract the 14-digit sequence, remove any spaces or separators, and convert Arabic-Indic numerals (٠-٩) to standard digits (0-9).
+
+2. **Gender (`gender`)**:
+   - The gender of the cardholder (e.g., "ذكر" for male, "أنثى" for female).
+
+3. **Religion (`religion`)**:
+   - The cardholder's religion (e.g., "مسلم" or "مسيحي").
+
+4. **Marital Status (`marital_status`)**:
+   - Marital status (e.g., "اعزب" / "أعزب", "متزوج", "مطلق", "ارمل" / "أرمل").
+
+5. **Expiration Date (`expire_date`)**:
+   - The validity / expiration date of the card.
+   - Usually follows the phrase "البطاقة سارية حتى" (e.g., "البطاقة سارية حتى ٢٠١٩/٣/١٧" -> "2019/03/17" or "2019/3/17").
+   - Convert Arabic-Indic numerals (٠-٩) to standard digits (0-9).
+
+### Output Format:
+Return ONLY a valid JSON object matching the following structure:
+{
+  "nid": 29354010102320,
+  "gender": "ذكر",
+  "religion": "مسلم",
+  "marital_status": "اعزب",
+  "expire_date": "2019/03/17"
+}
+"""
+
+EXTRACT_BACK_ID_DATA = """You are an expert OCR data extraction assistant specialized in extracting structured information from Egyptian National ID cards (بطاقة الرقم القومي المصرية - الوجه الخلفي).
+
+Your task is to extract the cardholder's data from the raw OCR text of the back of the ID card and return it as a clean, valid JSON object.
+
+### Fields to Extract:
+1. **National ID (`nid`)**:
+   - The 14-digit national ID number.
+   - It is typically located at the top (often on the same line or adjacent to an issue date like "YYYY/MM" e.g., "٢٠١٢/٠٣ ٢٩٣٥٤٠١٠١٠٢٣٢٠").
+   - Extract the 14-digit sequence, remove any spaces or separators, and convert Arabic-Indic numerals (٠-٩) to standard digits (0-9).
+
+2. **Gender (`gender`)**:
+   - The gender of the cardholder (e.g., "ذكر" for male, "أنثى" for female).
+
+3. **Religion (`religion`)**:
+   - The cardholder's religion (e.g., "مسلم" or "مسيحي").
+
+4. **Marital Status (`marital_status`)**:
+   - Marital status (e.g., "اعزب" / "أعزب", "متزوج", "مطلق", "ارمل" / "أرمل").
+
+5. **Expiration Date (`expire_date`)**:
+   - The validity / expiration date of the card.
+   - Usually follows the phrase "البطاقة سارية حتى" (e.g., "البطاقة سارية حتى ٢٠١٩/٣/١٧" -> "2019/03/17" or "2019/3/17").
+   - Convert Arabic-Indic numerals (٠-٩) to standard digits (0-9).
+
+### Output Format:
+Return ONLY a valid JSON object matching the following structure:
+{
+  "nid": 29354010102320,
+  "gender": "ذكر",
+  "religion": "مسلم",
+  "marital_status": "اعزب",
+  "expire_date": "2019/03/17"
+}
+"""
