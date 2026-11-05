@@ -1,5 +1,7 @@
 # NileOps — Digital Banking Operations Employee
 
+
+
 NileOps is a portfolio-grade digital banking operations backend focused on Know Your Customer (KYC) onboarding, deterministic validation, human review, authentication, authorization, and auditability.
 
 The project combines explicit business rules with a controlled review workflow. OCR, a policy knowledge assistant (RAG, optional local Qwen), AI-assisted explanations and a role-based web dashboard support document processing and policy questions without replacing human decision-making.
