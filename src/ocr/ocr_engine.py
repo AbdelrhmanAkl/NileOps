@@ -6,9 +6,17 @@ from datetime import date
 from pathlib import Path
 from typing import Any
 from dotenv import load_dotenv
-from openai import OpenAI
-from schemas import BackIdData, FrontIdData
-from prompt import EXTRACT_BACK_ID_DATA, EXTRACT_FRONT_ID_DATA
+from langchain_core.language_models.chat_models import BaseChatModel
+from langchain_core.messages import HumanMessage, SystemMessage
+from langchain_openai import ChatOpenAI
+
+# try:
+#     from schemas import BackIdData, FrontIdData
+#     from prompt import EXTRACT_BACK_ID_DATA, EXTRACT_FRONT_ID_DATA
+# except ImportError:
+#     from src.ocr.schemas import BackIdData, FrontIdData
+#     from src.ocr.prompt import EXTRACT_BACK_ID_DATA, EXTRACT_FRONT_ID_DATA
+from ocr import schemas, prompt
 
 load_dotenv()
 
@@ -16,15 +24,11 @@ load_dotenv()
 class OCR:
     def __init__(
         self,
-        base_url: str = "https://backend.sovereigneg.com/v1",
-        model: str = "qwen3.8-27b",
-        api_key: str | None = None,
+        ocr_llm: BaseChatModel,
+        extraction_llm: BaseChatModel,
     ):
-        self.model = model
-        self.client = OpenAI(
-            base_url=base_url,
-            api_key=api_key or os.getenv("OPENAI_API_KEY", "EMPTY"),
-        )
+        self.ocr_llm = ocr_llm
+        self.extraction_llm = extraction_llm
 
     def encode_image(
         self,
@@ -60,25 +64,21 @@ class OCR:
         """Extracts text from an image using the vision model."""
         base64_image, detected_mime = self.encode_image(image, mime_type=mime_type)
 
-        response = self.client.chat.completions.create(
-            model=self.model,
-            messages=[
+        message = HumanMessage(
+            content=[
+                {"type": "text", "text": "ocr and do nothing more. don't return any extra text"},
                 {
-                    "role": "user",
-                    "content": [
-                        {"type": "text", "text": "ocr and do nothing more. don't return any extra text"},
-                        {
-                            "type": "image_url",
-                            "image_url": {
-                                "url": f"data:{detected_mime};base64,{base64_image}",
-                            },
-                        },
-                    ],
+                    "type": "image_url",
+                    "image_url": {
+                        "url": f"data:{detected_mime};base64,{base64_image}",
+                    },
                 },
-            ],
+            ]
         )
-        print(response.choices[0].message.content)
-        return response.choices[0].message.content or ""
+        response = self.ocr_llm.invoke([message])
+        content = response.content if isinstance(response.content, str) else str(response.content)
+        print(content)
+        return content or ""
 
     @staticmethod
     def verify_nid_with_dob(nid: int | str | None, dob: str | None) -> bool:
@@ -200,64 +200,27 @@ class OCR:
                 "data": dict
             }
         """
-        extracted_text = self.extract_text(image, mime_type)
         data: dict[str, Any] = {}
 
-        # 1. Attempt using OpenAI structured output parser
         try:
-            completion = self.client.beta.chat.completions.parse(
-                model=self.model,
-                messages=[
-                    {"role": "system", "content": EXTRACT_FRONT_ID_DATA},
-                    {"role": "user", "content": f"OCR Extracted Text:\n{extracted_text}"},
-                ],
-                response_format=FrontIdData,
-            )
-            parsed = completion.choices[0].message.parsed
+            extracted_text = self.extract_text(image, mime_type)
+            if not extracted_text.strip():
+                return {"verified": False, "data": {}}
+
+            messages = [
+                SystemMessage(content=prompt.EXTRACT_FRONT_ID_DATA),
+                HumanMessage(content=f"OCR Extracted Text:\n{extracted_text}"),
+            ]
+            structured_llm = self.extraction_llm.with_structured_output(schemas.FrontIdData)
+            parsed = structured_llm.invoke(messages)
             if parsed is not None:
-                data = parsed.model_dump()
-        except Exception:
-            pass
-
-        # 2. Fallback to standard chat completions if beta.parse fails
-        if not data:
-            try:
-                response = self.client.chat.completions.create(
-                    model=self.model,
-                    messages=[
-                        {"role": "system", "content": EXTRACT_FRONT_ID_DATA},
-                        {"role": "user", "content": f"OCR Extracted Text:\n{extracted_text}"},
-                    ],
-                    response_format={"type": "json_object"},
-                )
-                raw_content = response.choices[0].message.content or "{}"
-            except Exception:
-                response = self.client.chat.completions.create(
-                    model=self.model,
-                    messages=[
-                        {"role": "system", "content": EXTRACT_FRONT_ID_DATA},
-                        {"role": "user", "content": f"OCR Extracted Text:\n{extracted_text}"},
-                    ],
-                )
-                raw_content = response.choices[0].message.content or "{}"
-
-            cleaned = raw_content.strip()
-            if cleaned.startswith("```"):
-                lines = cleaned.splitlines()
-                if lines and lines[0].startswith("```"):
-                    lines = lines[1:]
-                if lines and lines[-1].strip() == "```":
-                    lines = lines[:-1]
-                cleaned = "\n".join(lines).strip()
-
-            try:
-                data = FrontIdData.model_validate_json(cleaned).model_dump()
-            except Exception:
-                import json
-                try:
-                    data = json.loads(cleaned)
-                except Exception:
-                    data = {"raw_text": extracted_text}
+                if isinstance(parsed, schemas.FrontIdData):
+                    data = parsed.model_dump()
+                elif isinstance(parsed, dict):
+                    data = parsed
+        except Exception as e:
+            print(e)
+            data = {}
 
         verified = self.verify_nid_with_dob(data.get("nid"), data.get("dob"))
 
@@ -279,64 +242,27 @@ class OCR:
                 "data": dict
             }
         """
-        extracted_text = self.extract_text(image, mime_type)
         data: dict[str, Any] = {}
 
-        # 1. Attempt using OpenAI structured output parser
         try:
-            completion = self.client.beta.chat.completions.parse(
-                model=self.model,
-                messages=[
-                    {"role": "system", "content": EXTRACT_BACK_ID_DATA},
-                    {"role": "user", "content": f"OCR Extracted Text:\n{extracted_text}"},
-                ],
-                response_format=BackIdData,
-            )
-            parsed = completion.choices[0].message.parsed
+            extracted_text = self.extract_text(image, mime_type)
+            if not extracted_text.strip():
+                return {"verified": False, "data": {}}
+
+            messages = [
+                SystemMessage(content=prompt.EXTRACT_BACK_ID_DATA),
+                HumanMessage(content=f"OCR Extracted Text:\n{extracted_text}"),
+            ]
+            structured_llm = self.extraction_llm.with_structured_output(schemas.BackIdData)
+            parsed = structured_llm.invoke(messages)
             if parsed is not None:
-                data = parsed.model_dump()
-        except Exception:
-            pass
-
-        # 2. Fallback to standard chat completions if beta.parse fails
-        if not data:
-            try:
-                response = self.client.chat.completions.create(
-                    model=self.model,
-                    messages=[
-                        {"role": "system", "content": EXTRACT_BACK_ID_DATA},
-                        {"role": "user", "content": f"OCR Extracted Text:\n{extracted_text}"},
-                    ],
-                    response_format={"type": "json_object"},
-                )
-                raw_content = response.choices[0].message.content or "{}"
-            except Exception:
-                response = self.client.chat.completions.create(
-                    model=self.model,
-                    messages=[
-                        {"role": "system", "content": EXTRACT_BACK_ID_DATA},
-                        {"role": "user", "content": f"OCR Extracted Text:\n{extracted_text}"},
-                    ],
-                )
-                raw_content = response.choices[0].message.content or "{}"
-
-            cleaned = raw_content.strip()
-            if cleaned.startswith("```"):
-                lines = cleaned.splitlines()
-                if lines and lines[0].startswith("```"):
-                    lines = lines[1:]
-                if lines and lines[-1].strip() == "```":
-                    lines = lines[:-1]
-                cleaned = "\n".join(lines).strip()
-
-            try:
-                data = BackIdData.model_validate_json(cleaned).model_dump()
-            except Exception:
-                import json
-                try:
-                    data = json.loads(cleaned)
-                except Exception:
-                    data = {"raw_text": extracted_text}
+                if isinstance(parsed, schemas.BackIdData):
+                    data = parsed.model_dump()
+                elif isinstance(parsed, dict):
+                    data = parsed
+        except Exception as e:
+            print(e)
+            data = {}
 
         verified = self.verify_back_id_data(
             nid=data.get("nid"),
@@ -351,9 +277,19 @@ class OCR:
 
 
 if __name__ == '__main__':
-    ocr = OCR()
+    ocr_model = ChatOpenAI(
+        base_url="https://backend.sovereigneg.com/v1",
+        model="qwen3.8-27b",
+        api_key=os.getenv("OPENAI_API_KEY", "EMPTY"),
+    )
+    extraction_model = ChatOpenAI(
+        base_url="https://backend.sovereigneg.com/v1",
+        model="qwen3.8-27b",
+        api_key=os.getenv("OPENAI_API_KEY", "EMPTY"),
+    )
+    ocr = OCR(ocr_llm=ocr_model, extraction_llm=extraction_model)
 
-    res = ocr.extract_and_verify_back_id('./test_images/back2.jpg')
+    res = ocr.extract_and_verify_back_id('./test_images/back.jpg')
     print("=" * 50)
     print(res)
     print("=" * 50)
