@@ -14,6 +14,8 @@ python -m scripts.create_user                           # create admin/reviewer/
 python -m uvicorn src.api.main:app --reload
 ```
 
+For a quick demo, replace the seed/create_user lines with `python -m scripts.setup_demo` (creates `demo_viewer`, `demo_reviewer`, `demo_admin`, password `Demo-Pass-2026!`; refuses in production).
+
 Open <http://127.0.0.1:8000/dashboard> (UI) or `/docs` (API).
 
 ## Docker

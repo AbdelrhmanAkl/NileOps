@@ -111,3 +111,8 @@ dialog.dlg::backdrop { background: rgba(0,0,0,.5); }
   .dl { grid-template-columns: 1fr; }
 }
 @media print { .nav { display: none !important; } }
+.layout > main { margin: 0; width: 100%; min-width: 0; max-width: none; }
+.view { min-width: 0; }
+.view a { color: var(--primary); }
+.view .grid2 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 440px), 1fr)); }
+td span[dir="ltr"] { white-space: nowrap; }
