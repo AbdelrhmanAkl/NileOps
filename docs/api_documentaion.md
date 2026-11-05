@@ -203,3 +203,16 @@ Returns the complete event timeline of state changes and actions performed on a 
   ]
 }
 ```
+
+## Admin and session endpoints (phase 7)
+
+| Method | Path | Role | Purpose |
+|---|---|---|---|
+| GET | `/api/v1/auth/me` | any | Current username and role (used by the UI) |
+| GET/POST | `/api/v1/admin/users` | admin | List / create users (password policy enforced) |
+| PATCH | `/api/v1/admin/users/{id}` | admin | Change role or activate/deactivate (not yourself; never the last admin) |
+| POST | `/api/v1/admin/users/{id}/reset-password` | admin | Set a new password |
+| GET | `/api/v1/admin/audit-events` | admin | Combined audit log (`source`, `action`, `page`, `page_size`) |
+| GET | `/api/v1/admin/system` | admin | Version, environment, OCR/LLM availability, users by role |
+
+Login (`POST /api/v1/auth/token`) is throttled: HTTP 429 with `Retry-After` after repeated failures.

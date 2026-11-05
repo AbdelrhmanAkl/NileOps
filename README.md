@@ -1,8 +1,8 @@
-﻿# NileOps — Digital Banking Operations Employee
+# NileOps — Digital Banking Operations Employee
 
 NileOps is a portfolio-grade digital banking operations backend focused on Know Your Customer (KYC) onboarding, deterministic validation, human review, authentication, authorization, and auditability.
 
-The project combines explicit business rules with a controlled review workflow. Future OCR and AI-assisted capabilities are planned to support document processing and policy explanations without replacing human decision-making.
+The project combines explicit business rules with a controlled review workflow. OCR, a policy knowledge assistant (RAG, optional local Qwen), AI-assisted explanations and a role-based web dashboard support document processing and policy questions without replacing human decision-making.
 
 > **Project status:** Active development. NileOps is a development and portfolio project, not a certified banking system.
 
@@ -100,6 +100,19 @@ The current API enforces these permissions. Additional administrative capabiliti
 - Review actions record the previous and resulting application states.
 - Review changes and their audit events are committed together in the same database transaction.
 
+## Quick start
+
+See [docs/deployment.md](docs/deployment.md) (local and Docker), [docs/user_guide_ar.md](docs/user_guide_ar.md) (per-role guide), [docs/demo_script.md](docs/demo_script.md) and [docs/security.md](docs/security.md).
+
+```
+python -m scripts.init_db && python -m scripts.load_policies
+python -m scripts.create_user
+python -m uvicorn src.api.main:app --reload     # UI: /dashboard, API docs: /docs
+python -m pytest -q
+```
+
+Roles: **viewer** (read-only, masked IDs), **reviewer** (decisions, uploads, OCR), **admin** (everything plus users, audit log, system status).
+
 ## Technology Stack
 
 - **Language:** Python
@@ -111,7 +124,7 @@ The current API enforces these permissions. Additional administrative capabiliti
 - **Password hashing:** `pwdlib` with Argon2
 - **Testing:** Pytest, FastAPI TestClient, HTTPX
 
-PostgreSQL and Streamlit are planned for later stages.
+**Web UI:** static Arabic RTL single-page app served by FastAPI at `/dashboard` (no build step). **Search/AI:** deterministic Arabic BM25 retrieval; optional local Ollama/Qwen. PostgreSQL is planned for a later stage.
 
 ## Architecture
 
@@ -129,7 +142,7 @@ The intended processing flow is:
 
 `Application Intake → Document Metadata → Deterministic Validation → Human Review → Audit Trail`
 
-OCR, AI-assisted processing, and retrieval-based policy support are planned extensions, not prerequisites for the current workflow.
+OCR, retrieval-based policy support and explanations are implemented as advisory layers; every consequential decision stays with a human reviewer.
 
 ## Project Structure
 

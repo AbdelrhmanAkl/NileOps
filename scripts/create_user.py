@@ -4,6 +4,7 @@ from getpass import getpass
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 
+from src.core.passwords import validate_password
 from src.core.security import hash_password
 from src.db.session import SessionLocal, engine
 from src.models.user import ALLOWED_ROLES, User
@@ -35,16 +36,7 @@ def create_user() -> None:
     if password != confirmation:
         raise ValueError("Passwords do not match.")
 
-    if len(password) < MIN_PASSWORD_LENGTH:
-        raise ValueError(
-            f"Password must contain at least "
-            f"{MIN_PASSWORD_LENGTH} characters."
-        )
-
-    if len(password) > MAX_PASSWORD_LENGTH:
-        raise ValueError(
-            f"Password must not exceed {MAX_PASSWORD_LENGTH} characters."
-        )
+    validate_password(password, username)
 
     # Create only the users table if it does not already exist.
     User.__table__.create(bind=engine, checkfirst=True)

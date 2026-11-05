@@ -3,63 +3,39 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>NileOps | لوحة المتابعة</title>
+  <title>NileOps | لوحة العمليات</title>
   <link rel="stylesheet" href="/dashboard/style.css">
 </head>
 <body>
+  <a class="skip" href="#view">تخطَّ إلى المحتوى</a>
   <header class="topbar">
-    <div class="brand"><span class="logo" aria-hidden="true">N</span><div><h1>NileOps</h1><p>لوحة متابعة العمليات البنكية</p></div></div>
+    <div class="brand"><span class="logo" aria-hidden="true">N</span><div><h1>NileOps</h1><p>مساعد العمليات البنكية</p></div></div>
     <div class="session" id="session" hidden>
       <span id="who"></span>
       <button type="button" id="refresh" class="ghost">تحديث</button>
       <button type="button" id="logout" class="ghost">تسجيل الخروج</button>
     </div>
   </header>
+  <div class="banner" role="note">بيانات اصطناعية للتجربة. الذكاء الاصطناعي والقراءة الآلية يساعدان فقط، والقرار النهائي للموظف. <span id="role-note"></span></div>
 
-  <div class="banner" role="note">بيانات اصطناعية للتجربة. اللوحة للمتابعة فقط، وكل القرارات تُتخذ بشريًا من شاشات المراجعة.</div>
-
-  <main>
-    <section id="login" class="card narrow">
-      <h2>تسجيل الدخول</h2>
-      <form id="login-form" autocomplete="off">
-        <label for="username">اسم المستخدم</label>
-        <input id="username" name="username" required autocomplete="username" dir="ltr">
-        <label for="password">كلمة المرور</label>
-        <input id="password" name="password" type="password" required autocomplete="current-password" dir="ltr">
-        <button type="submit" class="primary">دخول</button>
-        <p id="login-error" class="error" role="alert" hidden></p>
-      </form>
-    </section>
-
-    <section id="app" hidden>
-      <nav class="tabs" role="tablist" aria-label="أقسام اللوحة">
-        <button role="tab" aria-selected="true" data-tab="overview" class="tab active">نظرة عامة</button>
-        <button role="tab" aria-selected="false" data-tab="queues" class="tab">قوائم المراجعة</button>
-        <button role="tab" aria-selected="false" data-tab="policy" class="tab">مساعد السياسات</button>
-        <button role="tab" aria-selected="false" data-tab="activity" class="tab">آخر الأنشطة</button>
-      </nav>
-      <p id="status-line" class="muted" aria-live="polite"></p>
-
-      <div id="tab-overview" class="panel"></div>
-      <div id="tab-queues" class="panel" hidden></div>
-      <div id="tab-policy" class="panel" hidden>
-        <form id="ask-form" class="card">
-          <label for="question">اسأل عن سياسة البنك</label>
-          <textarea id="question" rows="3" maxlength="500" minlength="5" required placeholder="مثال: كم مدة تسليم البطاقة الجديدة بعد الاعتماد؟"></textarea>
-          <p class="muted">لا تكتب بيانات عميل حقيقية. الإجابة من السياسات المعتمدة فقط، وتمتنع لو لم تجد سندًا.</p>
-          <button type="submit" class="primary">اسأل</button>
+  <div class="layout">
+    <nav id="nav" class="nav" aria-label="أقسام النظام"></nav>
+    <main>
+      <section id="login" class="card narrow">
+        <h2>تسجيل الدخول</h2>
+        <form id="login-form" autocomplete="off">
+          <label for="username">اسم المستخدم</label>
+          <input id="username" name="username" required autocomplete="username" dir="ltr">
+          <label for="password">كلمة المرور</label>
+          <input id="password" name="password" type="password" required autocomplete="current-password" dir="ltr">
+          <button type="submit" class="primary">دخول</button>
+          <p id="login-error" class="error" role="alert" hidden></p>
         </form>
-        <div id="ask-result" aria-live="polite"></div>
-      </div>
-      <div id="tab-activity" class="panel" hidden></div>
-    </section>
-  </main>
-
-  <aside id="detail" class="drawer" hidden aria-label="تفاصيل الشرح">
-    <div class="drawer-head"><h2 id="detail-title">شرح الحالة</h2><button type="button" id="detail-close" class="ghost" aria-label="إغلاق">إغلاق</button></div>
-    <div id="detail-body"></div>
-  </aside>
-
-  <script src="/dashboard/app.js"></script>
+      </section>
+      <section id="app" hidden><div id="view" class="view" tabindex="-1"></div></section>
+    </main>
+  </div>
+  <div id="toasts" class="toasts" aria-live="polite"></div>
+  <script type="module" src="/dashboard/app.js"></script>
 </body>
 </html>

@@ -1,0 +1,18 @@
+services:
+  nileops:
+    build: .
+    env_file: deploy/.env.production      # copy deploy/env.production.example and fill it in
+    ports:
+      - "127.0.0.1:8000:8000"             # put a TLS reverse proxy (nginx/Caddy) in front
+    volumes:
+      - nileops_data:/app/data            # SQLite database
+      - nileops_storage:/app/storage      # uploaded documents
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request as u; u.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+volumes:
+  nileops_data:
+  nileops_storage:

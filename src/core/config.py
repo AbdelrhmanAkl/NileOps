@@ -24,6 +24,10 @@ class Settings(BaseSettings):
     app_debug: bool = False
 
     database_url: str = "sqlite:///./data/nileops.db"
+    # Deployment hardening. ALLOWED_HOSTS is a comma-separated list (e.g. "ops.example.com").
+    allowed_hosts: str = "*"
+    docs_enabled: bool = True
+
     upload_dir: str = "storage"
     max_upload_size_mb: int = Field(default=10, ge=1, le=50)
 
@@ -55,6 +59,10 @@ class Settings(BaseSettings):
         ge=1,
         le=60,
     )
+
+    @property
+    def allowed_host_list(self) -> list[str]:
+        return [h.strip() for h in self.allowed_hosts.split(",") if h.strip()] or ["*"]
 
     @property
     def resolved_upload_dir(self) -> Path:

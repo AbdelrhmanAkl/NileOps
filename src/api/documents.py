@@ -254,6 +254,20 @@ def list_document_files(
     return [FileInfo.model_validate(f) for f in files]
 
 
+MASKED_FIELDS = {"national_id", "mobile"}
+
+
+def _mask_for_viewer(response: ExtractionResponse) -> ExtractionResponse:
+    """Read-only users never need the full ID or phone: show the last 4 characters (POL-DPP-001)."""
+    for item in response.fields:
+        if item.field_name in MASKED_FIELDS:
+            item.value = "*" * max(len(item.value) - 4, 0) + item.value[-4:]
+            # the recognised line of text would reveal the full number again
+            item.source = {k: v for k, v in (item.source or {}).items() if k != "line_text"}
+    response.derived = {}  # birth date and gender are derived from the national ID
+    return response
+
+
 def _fields_response(
     db: Session, file: DocumentFile, document: KYCDocument, application: KYCApplication, message: str, engine_name: str
 ) -> ExtractionResponse:
@@ -391,9 +405,10 @@ def get_extracted_fields(
     if file.ocr_status in {"not_run", "unavailable", "failed"}:
         raise HTTPException(status_code=409, detail="لم تتم قراءة هذا الملف بنجاح بعد.")
     application = db.get(KYCApplication, document.application_id)
-    return _fields_response(
+    response = _fields_response(
         db, file, document, application, "تم استرجاع الحقول المستخرجة.", file.ocr_engine or "unknown"
     )
+    return _mask_for_viewer(response) if current_user.role == "viewer" else response
 
 
 @router.post(

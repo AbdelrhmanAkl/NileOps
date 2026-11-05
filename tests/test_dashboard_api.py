@@ -264,7 +264,8 @@ def test_recent_activity_is_newest_first_without_details(seeded):
 # ---------------------------------------------------------------- static UI
 @pytest.mark.parametrize(
     ("path", "media"),
-    [("/dashboard", "text/html"), ("/dashboard/app.js", "text/javascript"), ("/dashboard/style.css", "text/css")],
+    [("/dashboard", "text/html"), ("/dashboard/style.css", "text/css")]
+    + [(f"/dashboard/{n}.js", "text/javascript") for n in ("app", "util", "v_overview", "v_lists", "v_kyc", "v_policy", "v_admin", "v_explain")],
 )
 def test_static_files_are_served_with_strict_headers(ctx, path, media):
     response = ctx.client.get(path)
@@ -288,8 +289,18 @@ def test_only_listed_static_files_exist(ctx):
         assert ctx.client.get(path).status_code in (404, 405)
 
 
+SCRIPTS = sorted(p.name for p in WEB.glob("*.js"))
+
+
+def test_every_script_file_is_served():
+    assert len(SCRIPTS) >= 8
+    client = TestClient(app)
+    for name in SCRIPTS:
+        assert client.get(f"/dashboard/{name}").status_code == 200, name
+
+
 def test_the_page_never_loads_anything_from_other_origins():
-    for name in ("dashboard.html", "app.js", "style.css"):
+    for name in ("dashboard.html", "style.css", *SCRIPTS):
         text = (WEB / name).read_text(encoding="utf-8")
         assert not re.search(r"""(?:src|href|url\(|import|fetch\()\s*=?\s*["']?\s*(?:https?:)?//""", text), name
 
@@ -301,6 +312,17 @@ def test_html_has_no_inline_scripts_styles_or_handlers():
 
 
 def test_script_never_builds_html_from_data():
-    script = (WEB / "app.js").read_text(encoding="utf-8")
-    for banned in ("innerHTML", "outerHTML", "insertAdjacentHTML", "document.write", "eval(", "new Function", "setAttribute(\"style\""):
-        assert banned not in script, banned
+    for name in SCRIPTS:
+        script = (WEB / name).read_text(encoding="utf-8")
+        for banned in ("innerHTML", "outerHTML", "insertAdjacentHTML", "document.write", "eval(", "new Function", "setAttribute(\"style\""):
+            assert banned not in script, (name, banned)
+
+
+@pytest.mark.parametrize("role", ["viewer", "reviewer", "admin"])
+def test_me_returns_identity_and_role(ctx, role):
+    body = ctx.client.get("/api/v1/auth/me", headers=ctx.headers(role)).json()
+    assert body == {"username": f"dash_{role}", "role": role}
+
+
+def test_me_requires_authentication(ctx):
+    assert ctx.client.get("/api/v1/auth/me").status_code == 401

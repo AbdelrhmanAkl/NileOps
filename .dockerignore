@@ -1,0 +1,10 @@
+.git
+.venv
+data
+storage
+tests
+docs
+*.db
+.env
+deploy/.env.production
+__pycache__

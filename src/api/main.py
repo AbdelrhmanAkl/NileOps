@@ -2,12 +2,13 @@
 from datetime import datetime
 from typing import Literal
 
-from fastapi import Depends, FastAPI, HTTPException, Query
+from fastapi import Depends, FastAPI, HTTPException, Query, Request
 from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import func, or_, select, text
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session, selectinload
 
+from src.api.admin import router as admin_router
 from src.api.auth import router as auth_router
 from src.api.banking import router as banking_router
 from src.api.complaints import router as complaints_router
@@ -39,10 +40,35 @@ app = FastAPI(
         "وعرض المستندات ونتائج التحقق وسجل التدقيق. "
         "البيانات الحالية اصطناعية لأغراض التطوير والاختبار."
     ),
-    version="0.1.0",
+    version="1.0.0",
+    docs_url="/docs" if settings.docs_enabled else None,
+    redoc_url=None,
+    openapi_url="/openapi.json" if settings.docs_enabled else None,
 )
 
+if settings.allowed_host_list != ["*"]:
+    from starlette.middleware.trustedhost import TrustedHostMiddleware
+
+    app.add_middleware(TrustedHostMiddleware, allowed_hosts=settings.allowed_host_list)
+
+
+@app.middleware("http")
+async def security_headers(request: Request, call_next):
+    """Baseline hardening for every response (static pages add a stricter CSP)."""
+    response = await call_next(request)
+    response.headers.setdefault("X-Content-Type-Options", "nosniff")
+    response.headers.setdefault("X-Frame-Options", "DENY")
+    response.headers.setdefault("Referrer-Policy", "no-referrer")
+    response.headers.setdefault("Permissions-Policy", "camera=(), microphone=(), geolocation=()")
+    if request.url.path.startswith("/api/"):
+        response.headers.setdefault("Cache-Control", "no-store")
+    if settings.app_env == "production":
+        response.headers.setdefault("Strict-Transport-Security", "max-age=31536000; includeSubDomains")
+    return response
+
+
 app.include_router(auth_router)
+app.include_router(admin_router)
 app.include_router(banking_router)
 app.include_router(complaints_router)
 app.include_router(documents_router)

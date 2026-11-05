@@ -7,6 +7,7 @@ values and audit "details" strings are never included.
 
 from __future__ import annotations
 
+import re
 from datetime import datetime
 from pathlib import Path
 
@@ -205,40 +206,31 @@ _CSP = (
     "default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'self'; "
     "img-src 'self' data:; base-uri 'none'; form-action 'none'; frame-ancestors 'none'"
 )
-_FILES = {
-    "/dashboard": ("dashboard.html", "text/html; charset=utf-8"),
-    "/dashboard/app.js": ("app.js", "text/javascript; charset=utf-8"),
-    "/dashboard/style.css": ("style.css", "text/css; charset=utf-8"),
+_ASSET = re.compile(r"^[a-z0-9_-]{1,40}\.(js|css)$")
+_ASSET_TYPES = {"js": "text/javascript; charset=utf-8", "css": "text/css; charset=utf-8"}
+_SECURITY_HEADERS = {
+    "Content-Security-Policy": _CSP,
+    "X-Content-Type-Options": "nosniff",
+    "Referrer-Policy": "no-referrer",
+    "Cache-Control": "no-store",
 }
 
 
-def _static(path: str) -> FileResponse:
-    name, media_type = _FILES[path]
+def _serve(name: str, media_type: str) -> FileResponse:
     file = WEB_DIR / name
     if not file.is_file():
         raise HTTPException(status_code=404, detail="الصفحة غير متاحة.")
-    return FileResponse(
-        file,
-        media_type=media_type,
-        headers={
-            "Content-Security-Policy": _CSP,
-            "X-Content-Type-Options": "nosniff",
-            "Referrer-Policy": "no-referrer",
-            "Cache-Control": "no-store",
-        },
-    )
+    return FileResponse(file, media_type=media_type, headers=_SECURITY_HEADERS)
 
 
 @web_router.get("/dashboard")
 def dashboard_page() -> FileResponse:
-    return _static("/dashboard")
+    return _serve("dashboard.html", "text/html; charset=utf-8")
 
 
-@web_router.get("/dashboard/app.js")
-def dashboard_script() -> FileResponse:
-    return _static("/dashboard/app.js")
-
-
-@web_router.get("/dashboard/style.css")
-def dashboard_style() -> FileResponse:
-    return _static("/dashboard/style.css")
+@web_router.get("/dashboard/{name}")
+def dashboard_asset(name: str) -> FileResponse:
+    # Only flat, lower-case *.js / *.css names that exist in src/web: no traversal is possible.
+    if not _ASSET.match(name):
+        raise HTTPException(status_code=404, detail="الصفحة غير متاحة.")
+    return _serve(name, _ASSET_TYPES[name.rsplit(".", 1)[1]])

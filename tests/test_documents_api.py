@@ -288,6 +288,22 @@ def test_get_fields_after_extraction_matches_and_is_readable_by_viewer(ctx):
     assert before.status_code == 404
 
 
+def test_viewers_see_national_id_and_phone_masked_but_reviewers_see_full_values(ctx):
+    file_id = ctx.upload().json()["file"]["id"]
+    extract(ctx, file_id)
+    url = f"{BASE}/{ctx.document_id}/files/{file_id}/fields"
+
+    viewer = ctx.client.get(url, headers=ctx.headers("viewer")).json()
+    values = {f["field_name"]: f["value"] for f in viewer["fields"]}
+    assert values["national_id"] == "**********4567" and "29801011234567" not in str(viewer)
+    assert viewer["derived"] == {}
+    assert values["full_name"] == "أحمد محمود علي"  # the name is still shown for context
+
+    reviewer = ctx.client.get(url, headers=ctx.headers("reviewer")).json()
+    assert {f["field_name"]: f["value"] for f in reviewer["fields"]}["national_id"] == "29801011234567"
+    assert reviewer["derived"]["birth_date"] == "1998-01-01"
+
+
 def test_extract_fails_cleanly_when_file_was_removed_from_storage(ctx):
     file_id = ctx.upload().json()["file"]["id"]
     for path in ctx.tmp.rglob("*.png"):

@@ -1,238 +1,108 @@
-"use strict";
-/* NileOps dashboard. Every piece of server data is inserted with textContent
-   (never as HTML strings), and the page's CSP forbids inline scripts. */
+/* NileOps dashboard v2: role-aware single-page app (ES modules, no inline code, textContent only). */
+import { h, $, replace, api, getToken, setToken, AuthError, label, errorBox, loading, toast } from "./util.js";
+import { overview } from "./v_overview.js";
+import { kycList, cardsList, accountsList, complaintsList, complaintDetail, cardDetail, accountDetail } from "./v_lists.js";
+import { kycDetail } from "./v_kyc.js";
+import { policyView } from "./v_policy.js";
+import { usersView, auditView, systemView } from "./v_admin.js";
 
-const TOKEN_KEY = "nileops_token";
 const REFRESH_MS = 60000;
-let memoryToken = null;
-let refreshTimer = null;
+let session = null;
+let timer = null;
 
-const LABELS = {
-  account: { pending: "قيد الانتظار", under_review: "تحت المراجعة", needs_information: "مطلوب استكمال", approved: "معتمد", rejected: "مرفوض", cancelled: "ملغى" },
-  card: { pending: "قيد الانتظار", under_review: "تحت المراجعة", approved: "معتمد", rejected: "مرفوض", issued: "تم الإصدار المحاكى", cancelled: "ملغى" },
-  complaint: { new: "جديدة", classified: "مصنّفة", assigned: "مُسندة", in_progress: "قيد المعالجة", resolved: "تم حلها", closed: "مغلقة" },
-  priority: { urgent: "عاجلة", high: "عالية", medium: "متوسطة", low: "منخفضة" },
-  accountType: { savings: "توفير", current: "جاري" },
-  cardType: { debit: "خصم مباشر", prepaid: "مدفوعة مسبقًا" },
-  role: { viewer: "مشاهد", reviewer: "مراجع", admin: "مدير", human: "موظف", system: "النظام", ai: "النظام" },
-  entity: { kyc_application: "طلب اعرف عميلك", complaint: "شكوى", card_issuance_request: "طلب بطاقة", account_opening_request: "طلب فتح حساب", policy_query: "سياسات", application_explanation: "شرح طلب", complaint_explanation: "شرح شكوى", document: "مستند" },
-  action: { HUMAN_REVIEW: "قرار مراجعة بشرية", POLICY_QUESTION: "سؤال عن سياسة", POLICY_RELOAD: "تحميل سياسات", EXPLANATION_VIEWED: "عرض شرح", synthetic_complaint_created: "إنشاء شكوى تجريبية", synthetic_request_created: "إنشاء طلب تجريبي", synthetic_account_created: "إنشاء حساب تجريبي", synthetic_customer_created: "إنشاء عميل تجريبي", SIMULATED_CARD_ISSUANCE: "إصدار بطاقة محاكى" },
-};
-const label = (group, key) => (LABELS[group] && LABELS[group][key]) || String(key);
-
-/* ------------------------------------------------------------ DOM helpers */
-function h(tag, props, ...children) {
-  const node = document.createElement(tag);
-  for (const [key, value] of Object.entries(props || {})) {
-    if (value === false || value == null) continue;
-    if (key === "class") node.className = value;
-    else if (key.startsWith("on")) node.addEventListener(key.slice(2), value);
-    else node.setAttribute(key, value === true ? "" : String(value));
-  }
-  for (const child of children.flat()) {
-    if (child == null || child === false) continue;
-    node.append(child.nodeType ? child : document.createTextNode(String(child)));
-  }
-  return node;
-}
-const $ = (id) => document.getElementById(id);
-const replace = (node, ...children) => node.replaceChildren(...children.flat().filter(Boolean));
-const fmt = (n) => Number(n).toLocaleString("en");
-const when = (iso) => {
-  const d = new Date(iso);
-  return Number.isNaN(d.getTime()) ? "" : new Intl.DateTimeFormat("ar-EG-u-nu-latn", { dateStyle: "short", timeStyle: "short" }).format(d);
+const NAV = [
+  { key: "overview", text: "نظرة عامة", roles: ["viewer", "reviewer", "admin"] },
+  { key: "kyc", text: "اعرف عميلك", roles: ["viewer", "reviewer", "admin"] },
+  { key: "complaints", text: "الشكاوى", roles: ["viewer", "reviewer", "admin"] },
+  { key: "cards", text: "البطاقات", roles: ["viewer", "reviewer", "admin"] },
+  { key: "accounts", text: "الحسابات", roles: ["viewer", "reviewer", "admin"] },
+  { key: "policies", text: "مساعد السياسات", roles: ["viewer", "reviewer", "admin"] },
+  { key: "users", text: "المستخدمون", roles: ["admin"], group: "admin" },
+  { key: "audit", text: "سجل التدقيق", roles: ["admin"], group: "admin" },
+  { key: "system", text: "حالة النظام", roles: ["admin"], group: "admin" },
+];
+const LIST = { kyc: kycList, complaints: complaintsList, cards: cardsList, accounts: accountsList };
+const DETAIL = { kyc: kycDetail, complaints: complaintDetail, cards: cardDetail, accounts: accountDetail };
+const SIMPLE = { overview, policies: policyView, users: usersView, audit: auditView, system: systemView };
+const ROLE_NOTE = {
+  viewer: "وضع المشاهدة: قراءة فقط، ويُخفى الرقم القومي والموبايل.",
+  reviewer: "وضع المراجع: تتخذ قرارات المراجعة بنفسك، وكل قرار يُسجَّل باسمك.",
+  admin: "وضع المدير: كل الصلاحيات، بالإضافة إلى المستخدمين والتدقيق.",
 };
 
-/* ------------------------------------------------------------------ token */
-function getToken() {
-  try { return sessionStorage.getItem(TOKEN_KEY) || memoryToken; } catch { return memoryToken; }
+function parseHash() {
+  const [path, query = ""] = location.hash.replace(/^#\/?/, "").split("?");
+  const [route = "overview", id] = path.split("/");
+  return { route: route || "overview", id: id && /^\d+$/.test(id) ? Number(id) : null, params: new URLSearchParams(query) };
 }
-function setToken(token) {
-  memoryToken = token;
-  try { token ? sessionStorage.setItem(TOKEN_KEY, token) : sessionStorage.removeItem(TOKEN_KEY); } catch { /* storage blocked: memory only */ }
+
+function buildNav(current) {
+  const items = NAV.filter((n) => n.roles.includes(session.role));
+  replace($("nav"), items.map((n, i) => [
+    n.group === "admin" && items[i - 1]?.group !== "admin" ? h("span", { class: "nav-sep", role: "separator" }, "الإدارة") : null,
+    h("a", { href: `#/${n.key}`, class: n.key === current ? "active" : "", "aria-current": n.key === current ? "page" : null }, n.text),
+  ]));
 }
-function roleFromToken(token) {
+
+async function render() {
+  if (!session) return;
+  const { route, id, params } = parseHash();
+  const view = $("view");
+  const allowed = NAV.find((n) => n.key === route && n.roles.includes(session.role));
+  if (!allowed) { location.hash = "#/overview"; return; }
+  buildNav(route);
+  document.title = `NileOps | ${allowed.text}`;
   try {
-    const payload = JSON.parse(atob(token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/")));
-    return payload.role || "";
-  } catch { return ""; }
-}
-
-/* -------------------------------------------------------------------- API */
-class AuthError extends Error {}
-async function api(path, options = {}) {
-  const response = await fetch(path, {
-    ...options,
-    headers: { Accept: "application/json", ...(options.headers || {}), Authorization: `Bearer ${getToken()}` },
-  });
-  if (response.status === 401) throw new AuthError("انتهت الجلسة، سجّل الدخول مرة أخرى.");
-  if (!response.ok) {
-    let detail = "تعذر تنفيذ الطلب.";
-    try { const body = await response.json(); if (typeof body.detail === "string") detail = body.detail; } catch { /* keep default */ }
-    throw new Error(detail);
-  }
-  return response.json();
-}
-
-/* ---------------------------------------------------------------- widgets */
-function bars(title, subtitle, counts, labeler = (k) => k) {
-  const entries = Object.entries(counts || {}).sort((a, b) => b[1] - a[1]);
-  const max = Math.max(1, ...entries.map(([, v]) => v));
-  return h("section", { class: "card" },
-    h("h3", {}, title), subtitle ? h("p", { class: "sub" }, subtitle) : null,
-    entries.length === 0 ? h("p", { class: "empty" }, "لا توجد بيانات.") :
-      h("div", { class: "bars", role: "list" }, entries.map(([key, value]) =>
-        h("div", { class: "bar-row", role: "listitem" },
-          h("span", {}, labeler(key)),
-          h("span", { class: "bar-track", "aria-hidden": "true" }, fillBar(value / max)),
-          h("span", { class: "bar-num" }, fmt(value))))));
-}
-function fillBar(ratio) {
-  const node = h("span", { class: "bar-fill" });
-  node.style.width = `${Math.round(ratio * 100)}%`; // CSSOM is allowed under the CSP; inline style attributes are not
-  return node;
-}
-function kpi(value, text, attention) {
-  return h("div", { class: attention && value > 0 ? "kpi attention" : "kpi" }, h("div", { class: "value" }, fmt(value)), h("div", { class: "label" }, text));
-}
-function table(headers, rows) {
-  if (rows.length === 0) return h("p", { class: "empty" }, "لا توجد عناصر مفتوحة.");
-  return h("div", { class: "table-wrap" }, h("table", {},
-    h("thead", {}, h("tr", {}, headers.map((t) => h("th", { scope: "col" }, t)))),
-    h("tbody", {}, rows.map((cells) => h("tr", {}, cells.map((c) => h("td", {}, c)))))));
-}
-const pill = (text, cls) => h("span", { class: `pill ${cls || ""}` }, text);
-
-/* ----------------------------------------------------------------- renders */
-function renderOverview(s) {
-  const k = s.kpis;
-  replace($("tab-overview"),
-    h("div", { class: "kpis" },
-      kpi(k.open_reviews, "عناصر تنتظر مراجعة بشرية", true),
-      kpi(k.urgent_open_complaints, "شكاوى عاجلة مفتوحة", true),
-      kpi(k.ocr_fields_need_review, `حقول OCR تحتاج مراجعة (من ${fmt(k.ocr_fields_total)})`, false),
-      kpi(k.active_policies, "سياسات معتمدة في قاعدة المعرفة", false)),
-    h("div", { class: "grid2" },
-      bars("طلبات اعرف عميلك", `الإجمالي ${fmt(s.applications.total)}`, s.applications.by_status),
-      bars("حالة المستندات", `الإجمالي ${fmt(s.documents.total)}`, s.documents.by_status),
-      bars("طلبات فتح الحساب", `الإجمالي ${fmt(s.account_requests.total)}`, s.account_requests.by_status, (x) => label("account", x)),
-      bars("طلبات البطاقات", `الإجمالي ${fmt(s.card_requests.total)}`, s.card_requests.by_status, (x) => label("card", x)),
-      bars("الشكاوى حسب الحالة", `الإجمالي ${fmt(s.complaints.total)}`, s.complaints.by_status, (x) => label("complaint", x)),
-      bars("الشكاوى حسب الأولوية", "", s.complaints.by_priority, (x) => label("priority", x)),
-      bars("الشكاوى حسب التصنيف", "", s.complaints.by_category)));
-}
-function renderQueues(s) {
-  const explainBtn = (kind, id) => h("button", { type: "button", class: "linkish", onclick: () => showExplanation(kind, id) }, "شرح الحالة");
-  replace($("tab-queues"),
-    h("section", { class: "card" }, h("h3", {}, "طلبات اعرف عميلك المفتوحة"),
-      table(["الرقم", "النوع", "الحالة", ""], s.queues.applications.map((r) => [r.number, r.kind, r.status, explainBtn("applications", r.id)]))),
-    h("section", { class: "card" }, h("h3", {}, "الشكاوى المفتوحة (الأعلى أولوية أولًا)"),
-      table(["الرقم", "التصنيف", "الأولوية", "الحالة", ""], s.queues.complaints.map((r) => [r.number, r.kind, pill(label("priority", r.priority), r.priority), label("complaint", r.status), explainBtn("complaints", r.id)]))),
-    h("section", { class: "card" }, h("h3", {}, "طلبات البطاقات المفتوحة"),
-      table(["الرقم", "النوع", "الحالة"], s.queues.cards.map((r) => [r.number, label("cardType", r.kind), label("card", r.status)]))),
-    h("section", { class: "card" }, h("h3", {}, "طلبات فتح الحساب المفتوحة"),
-      table(["الرقم", "النوع", "الحالة"], s.queues.accounts.map((r) => [r.number, label("accountType", r.kind), label("account", r.status)]))));
-}
-function renderActivity(s) {
-  replace($("tab-activity"), h("section", { class: "card" }, h("h3", {}, "آخر الأنشطة"),
-    h("p", { class: "sub" }, "الإجراء والجهة والوقت فقط، دون أي بيانات عملاء."),
-    table(["الوقت", "العنصر", "الإجراء", "الجهة"], s.recent_activity.map((a) => [when(a.at), label("entity", a.entity), label("action", a.action), label("role", a.actor_role)]))));
-}
-
-/* ------------------------------------------------------------- explanation */
-async function showExplanation(kind, id) {
-  const body = $("detail-body");
-  $("detail").hidden = false;
-  replace(body, h("p", { class: "muted" }, "جارٍ التحميل..."));
-  try {
-    const e = await api(`/api/v1/explanations/${kind}/${id}`);
-    replace(body,
-      h("p", { class: "muted" }, `المرجع: ${e.reference}`),
-      h("p", {}, e.summary),
-      h("h3", {}, "تفاصيل"), h("ul", {}, e.points.map((p) => h("li", {}, p))),
-      h("h3", {}, "الخطوات التالية"), h("ul", {}, e.next_steps.map((p) => h("li", {}, p))),
-      e.citations.length ? h("h3", {}, "السند من السياسات") : null,
-      e.citations.map((c) => h("blockquote", {}, h("strong", {}, `${c.policy_code} — الإصدار ${c.version} — ${c.heading}`), h("br"), c.excerpt)),
-      e.note ? h("p", { class: "muted" }, e.note) : null,
-      h("p", { class: "muted" }, `${e.advisory} (الأسلوب: ${e.mode === "llm" ? "صياغة النموذج المحلي" : "الشرح الجاهز"})`));
-  } catch (err) {
-    if (err instanceof AuthError) return endSession(err.message);
-    replace(body, h("p", { class: "error", role: "alert" }, err.message));
+    if (id && DETAIL[route]) await DETAIL[route](view, session, id);
+    else if (LIST[route]) await LIST[route](view, session, params);
+    else await SIMPLE[route](view, session);
+    view.focus({ preventScroll: true });
+  } catch (error) {
+    if (error instanceof AuthError) return logout(error.message);
+    replace(view, errorBox(error.message || "حدث خطأ غير متوقع."), h("button", { type: "button", onclick: render }, "إعادة المحاولة"));
   }
 }
 
-/* ----------------------------------------------------------- policy helper */
-async function askPolicy(event) {
-  event.preventDefault();
-  const out = $("ask-result");
-  replace(out, h("p", { class: "muted" }, "جارٍ البحث في السياسات..."));
-  try {
-    const r = await api("/api/v1/policies/ask", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ question: $("question").value.trim() }) });
-    replace(out, h("section", { class: r.status === "answered" ? "card" : "card abstain" },
-      h("h3", {}, r.status === "answered" ? "الإجابة" : "لا توجد إجابة"),
-      h("p", { class: "answer" }, r.answer),
-      r.citations.length ? h("h3", {}, "المصادر") : null,
-      r.citations.map((c) => h("blockquote", {}, h("strong", {}, `[${c.number}] ${c.title} — ${c.policy_code} الإصدار ${c.version} — ${c.heading}`), h("br"), c.excerpt)),
-      r.note ? h("p", { class: "muted" }, r.note) : null,
-      h("p", { class: "muted" }, r.advisory)));
-  } catch (err) {
-    if (err instanceof AuthError) return endSession(err.message);
-    replace(out, h("p", { class: "error", role: "alert" }, err.message));
-  }
-}
-
-/* -------------------------------------------------------------- session/tabs */
-async function load() {
-  $("status-line").textContent = "جارٍ التحديث...";
-  try {
-    const summary = await api("/api/v1/dashboard/summary");
-    renderOverview(summary); renderQueues(summary); renderActivity(summary);
-    $("status-line").textContent = `آخر تحديث: ${when(summary.generated_at)}`;
-  } catch (err) {
-    if (err instanceof AuthError) return endSession(err.message);
-    $("status-line").textContent = err.message;
-  }
-}
-function startSession() {
-  const role = roleFromToken(getToken());
-  $("who").textContent = role ? `الدور: ${label("role", role)}` : "";
-  $("login").hidden = true; $("app").hidden = false; $("session").hidden = false;
-  load();
-  clearInterval(refreshTimer);
-  refreshTimer = setInterval(() => { if (!document.hidden) load(); }, REFRESH_MS);
-}
-function endSession(message) {
-  clearInterval(refreshTimer);
+function logout(message) {
+  clearInterval(timer);
   setToken(null);
-  $("app").hidden = true; $("session").hidden = true; $("detail").hidden = true; $("login").hidden = false;
-  $("password").value = "";
+  session = null;
+  $("app").hidden = true; $("session").hidden = true; $("login").hidden = false;
   const box = $("login-error");
   box.textContent = message || ""; box.hidden = !message;
-}
-async function login(event) {
-  event.preventDefault();
-  const box = $("login-error"); box.hidden = true;
-  try {
-    const response = await fetch("/api/v1/auth/token", { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: new URLSearchParams({ username: $("username").value.trim(), password: $("password").value }) });
-    if (!response.ok) throw new Error(response.status === 401 ? "اسم المستخدم أو كلمة المرور غير صحيحة." : "تعذر تسجيل الدخول الآن.");
-    setToken((await response.json()).access_token);
-    $("password").value = "";
-    startSession();
-  } catch (err) { box.textContent = err.message; box.hidden = false; }
-}
-function selectTab(name) {
-  for (const tab of document.querySelectorAll(".tab")) {
-    const active = tab.dataset.tab === name;
-    tab.classList.toggle("active", active); tab.setAttribute("aria-selected", String(active));
-    $(`tab-${tab.dataset.tab}`).hidden = !active;
-  }
+  $("username").focus();
 }
 
-$("login-form").addEventListener("submit", login);
-$("logout").addEventListener("click", () => endSession(""));
-$("refresh").addEventListener("click", load);
-$("ask-form").addEventListener("submit", askPolicy);
-$("detail-close").addEventListener("click", () => { $("detail").hidden = true; });
-for (const tab of document.querySelectorAll(".tab")) tab.addEventListener("click", () => selectTab(tab.dataset.tab));
-document.addEventListener("keydown", (e) => { if (e.key === "Escape") $("detail").hidden = true; });
-if (getToken()) startSession();
+async function start() {
+  try {
+    const me = await api("/api/v1/auth/me");
+    session = { username: me.username, role: me.role };
+  } catch (error) { return logout(error instanceof AuthError ? "" : error.message); }
+  $("login").hidden = true; $("app").hidden = false; $("session").hidden = false;
+  $("who").textContent = `${session.username} — ${label("role", session.role)}`;
+  $("role-note").textContent = ROLE_NOTE[session.role] || "";
+  if (!location.hash) location.hash = "#/overview";
+  await render();
+  clearInterval(timer);
+  timer = setInterval(() => { if (!document.hidden && /^#\/(overview)?$/.test(location.hash)) render(); }, REFRESH_MS);
+}
+
+$("login-form").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const button = event.submitter; button.disabled = true;
+  const box = $("login-error"); box.hidden = true;
+  try {
+    const body = new URLSearchParams({ username: $("username").value.trim(), password: $("password").value });
+    const response = await fetch("/api/v1/auth/token", { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body });
+    if (response.status === 429) throw new Error("محاولات كثيرة. انتظر بضع دقائق ثم حاول مرة أخرى.");
+    if (!response.ok) throw new Error("اسم المستخدم أو كلمة المرور غير صحيحة.");
+    setToken((await response.json()).access_token);
+    $("password").value = "";
+    await start();
+  } catch (error) { box.textContent = error.message || "تعذر الاتصال بالخادم."; box.hidden = false; }
+  finally { button.disabled = false; }
+});
+$("logout").addEventListener("click", () => logout(""));
+$("refresh").addEventListener("click", render);
+window.addEventListener("hashchange", render);
+if (getToken()) start(); else logout("");
