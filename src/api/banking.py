@@ -62,6 +62,22 @@ class AccountOpeningDetail(AccountOpeningItem):
     kyc_approved: bool = False
 
 
+def customer_has_active_account(db: Session, customer_id: int, account_type: str) -> bool:
+    """True when the customer already holds an active account of this type (one per type)."""
+    return (
+        db.scalar(
+            select(func.count())
+            .select_from(BankAccount)
+            .where(
+                BankAccount.customer_id == customer_id,
+                BankAccount.account_type == account_type,
+                BankAccount.status == "active",
+            )
+        )
+        or 0
+    ) > 0
+
+
 def customer_has_approved_kyc(db: Session, customer_id: int) -> bool:
     """True when a human reviewer has approved a KYC application linked to this customer.
 
@@ -250,6 +266,9 @@ def review_account_opening_request(
             status_code=409,
             detail="لا يمكن اعتماد فتح الحساب قبل اعتماد طلب التحقق من هوية العميل (KYC).",
         )
+
+    if new_status == "approved" and customer_has_active_account(db, request.customer_id, request.account_type):
+        raise HTTPException(status_code=409, detail="لدى العميل حساب نشط من هذا النوع بالفعل.")
 
     try:
         request.status = new_status

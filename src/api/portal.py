@@ -22,6 +22,7 @@ from sqlalchemy.orm import Session
 
 from src.api.complaints import register_complaint
 from src.api.documents import UPLOADABLE_STATUSES, UploadResponse, save_document_upload
+from src.api.banking import customer_has_active_account
 from src.core.auth import require_customer
 from src.core.config import get_settings
 from src.core.passwords import validate_password
@@ -273,6 +274,17 @@ def new_account_request(payload: AccountRequestIn, ctx: tuple[User, Customer] = 
     user, c = ctx
     if _open_count(db, AccountOpeningRequest, c.id, ("approved", "rejected", "cancelled")) >= MAX_OPEN_REQUESTS:
         raise HTTPException(status_code=409, detail="لديك طلبات فتح حساب مفتوحة بالفعل. انتظر نتيجتها أولًا.")
+    if customer_has_active_account(db, c.id, payload.account_type):
+        raise HTTPException(status_code=409, detail="لديك حساب نشط من هذا النوع بالفعل.")
+    same_type_open = db.scalar(
+        select(func.count()).select_from(AccountOpeningRequest).where(
+            AccountOpeningRequest.customer_id == c.id,
+            AccountOpeningRequest.account_type == payload.account_type,
+            AccountOpeningRequest.status.notin_(("approved", "rejected", "cancelled")),
+        )
+    )
+    if same_type_open:
+        raise HTTPException(status_code=409, detail="لديك طلب مفتوح لنفس نوع الحساب بالفعل. انتظر نتيجته.")
     r = AccountOpeningRequest(request_number=f"TMP-{uuid4().hex[:20]}", customer_id=c.id, account_type=payload.account_type,
                               status="pending", branch_name=(payload.branch_name or "").strip() or None, simulation_only=True)
     db.add(r)

@@ -237,8 +237,7 @@ def test_complaint_text_length_is_validated(ctx):
 
 def test_open_request_limits_stop_spam(ctx):
     h = ctx.new_customer("jack")
-    for _ in range(3):
-        assert ctx.client.post(f"{P}/account-requests", headers=h, json={"account_type": "current"}).status_code == 201
+    assert ctx.client.post(f"{P}/account-requests", headers=h, json={"account_type": "current"}).status_code == 201
     assert ctx.client.post(f"{P}/account-requests", headers=h, json={"account_type": "current"}).status_code == 409
 
 
@@ -433,3 +432,20 @@ def test_staff_notes_never_store_long_identifier_numbers(ctx):
         assert events and all("29901011234567" not in e.details_ar and "01012345678" not in e.details_ar for e in events)
     detail = ctx.client.get(f"/api/v1/banking/account-opening/{req['id']}", headers=reviewer).json()
     assert "29901011234567" not in (detail["review_notes"] or "")
+
+
+def test_customer_cannot_hold_two_open_requests_or_two_accounts_of_the_same_type(ctx):
+    h = ctx.new_customer("mariam")
+    reviewer = ctx.staff("reviewer")
+    first = ctx.client.post(f"{P}/account-requests", headers=h, json={"account_type": "savings"})
+    assert first.status_code == 201
+    again = ctx.client.post(f"{P}/account-requests", headers=h, json={"account_type": "savings"})
+    assert again.status_code == 409
+    assert ctx.client.post(f"{P}/account-requests", headers=h, json={"account_type": "current"}).status_code == 201
+
+    approve_kyc_for(ctx, "mariam")
+    review = f"/api/v1/banking/account-opening/{first.json()['id']}/review"
+    for decision in ("under_review", "approved"):
+        assert ctx.client.post(review, headers=reviewer, json={"decision": decision, "notes": "مراجعة"}).status_code == 200
+    blocked = ctx.client.post(f"{P}/account-requests", headers=h, json={"account_type": "savings"})
+    assert blocked.status_code == 409 and "حساب نشط" in blocked.json()["detail"]
