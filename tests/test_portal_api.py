@@ -19,6 +19,7 @@ from src.core.security import create_access_token, hash_password
 from src.core.throttle import login_throttle, register_throttle
 from src.db.session import Base, get_db
 from src.models.banking import BankAccount, BankingAuditEvent, CardIssuanceRequest, Complaint, Customer
+from src.models.kyc import ApplicationStatus, KYCApplication
 from src.models.portal import CustomerAccount
 from src.models.user import User
 
@@ -242,6 +243,16 @@ def test_open_request_limits_stop_spam(ctx):
 
 
 # ---------------------------------------------------------------- isolation
+def approve_kyc_for(ctx, username):
+    """Simulate a human reviewer having approved the customer's KYC (status set directly)."""
+    h = ctx.login(username)
+    kyc = ctx.client.post(f"{P}/kyc-applications", headers=h).json()
+    with ctx.factory() as db:
+        app_row = db.get(KYCApplication, kyc["id"])
+        app_row.status = ApplicationStatus.APPROVED.value
+        db.commit()
+
+
 def make_account(ctx, username):
     with ctx.factory() as db:
         customer_id = db.scalar(select(CustomerAccount.customer_id).join(User, User.id == CustomerAccount.user_id).where(User.username == username))
@@ -371,6 +382,7 @@ def test_full_customer_journey_account_then_card(ctx):
     reviewer = ctx.staff("reviewer")
     req = ctx.client.post(f"{P}/account-requests", headers=h, json={"account_type": "current"}).json()
     assert ctx.client.get(f"{P}/overview", headers=h).json()["accounts"] == []
+    approve_kyc_for(ctx, "sara")
     for decision in ("under_review", "approved"):
         r = ctx.client.post(f"/api/v1/banking/account-opening/{req['id']}/review", headers=reviewer, json={"decision": decision, "notes": "قرار المراجع"})
         assert r.status_code == 200, r.text
@@ -390,3 +402,20 @@ def test_card_request_needs_an_active_account(ctx):
         db.get(BankAccount, account_id).status = "frozen"
         db.commit()
     assert ctx.client.post(f"{P}/card-requests", headers=h, json={"card_type": "debit", "account_id": account_id}).status_code == 409
+
+
+def test_account_cannot_be_approved_before_the_customers_kyc_is_approved(ctx):
+    h = ctx.new_customer("kareem")
+    reviewer = ctx.staff("reviewer")
+    req = ctx.client.post(f"{P}/account-requests", headers=h, json={"account_type": "savings"}).json()
+    review = f"/api/v1/banking/account-opening/{req['id']}/review"
+    assert ctx.client.post(review, headers=reviewer, json={"decision": "under_review", "notes": "بدء"}).status_code == 200
+    blocked = ctx.client.post(review, headers=reviewer, json={"decision": "approved", "notes": "موافقة"})
+    assert blocked.status_code == 409 and "KYC" in blocked.json()["detail"]
+    assert ctx.client.get(f"{P}/overview", headers=h).json()["accounts"] == []
+    detail = ctx.client.get(f"/api/v1/banking/account-opening/{req['id']}", headers=reviewer).json()
+    assert detail["kyc_approved"] is False
+    approve_kyc_for(ctx, "kareem")
+    assert ctx.client.get(f"/api/v1/banking/account-opening/{req['id']}", headers=reviewer).json()["kyc_approved"] is True
+    assert ctx.client.post(review, headers=reviewer, json={"decision": "approved", "notes": "موافقة"}).status_code == 200
+    assert len(ctx.client.get(f"{P}/overview", headers=h).json()["accounts"]) == 1

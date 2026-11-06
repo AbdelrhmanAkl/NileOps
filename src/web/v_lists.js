@@ -135,7 +135,7 @@ export async function accountDetail(root, session, id) {
     replace(root, loading());
     const r = await api(`/api/v1/banking/account-opening/${id}`);
     replace(root, back("#/accounts", "كل طلبات الحسابات"), h("div", { class: "page-head" }, h("h2", {}, "طلب حساب ", num(r.request_number)), pill(label("account", r.status), r.status)),
-      h("section", { class: "card" }, h("h3", {}, "البيانات"), dl([["العميل", r.customer_name], ["نوع الحساب", label("accountType", r.account_type)], ["الفرع", r.branch_name], ["ملاحظات المراجعة", r.review_notes], ["آخر تحديث", when(r.updated_at)]]), h("p", { class: "muted" }, "محاكاة فقط.")),
+      h("section", { class: "card" }, h("h3", {}, "البيانات"), dl([["العميل", r.customer_name], ["نوع الحساب", label("accountType", r.account_type)], ["الفرع", r.branch_name], ["التحقق من الهوية (KYC)", r.kyc_approved ? "معتمد" : "غير معتمد — لا يمكن اعتماد الحساب قبله"], ["ملاحظات المراجعة", r.review_notes], ["آخر تحديث", when(r.updated_at)]]), h("p", { class: "muted" }, "محاكاة فقط.")),
       h("section", { class: "card" }, h("h3", {}, "الإجراءات"), decisionBar({ session, allowed: ACCOUNT_NEXT[r.status] || [], danger: ["rejected"], onDecide: (key, notes) => act(api(`/api/v1/banking/account-opening/${id}/review`, { method: "POST", json: { decision: key, notes } }), "تم تسجيل القرار.", render) })));
   };
   await render();

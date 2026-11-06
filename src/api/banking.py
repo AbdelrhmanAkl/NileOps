@@ -21,6 +21,8 @@ from src.models.banking import (
     CardIssuanceRequest,
     Customer,
 )
+from src.models.kyc import ApplicationStatus, KYCApplication
+from src.models.portal import CustomerKycLink
 from src.models.user import User
 
 
@@ -56,6 +58,26 @@ class AccountOpeningListResponse(BaseModel):
 class AccountOpeningDetail(AccountOpeningItem):
     customer_name: str
     customer_ref: str
+    kyc_approved: bool = False
+
+
+def customer_has_approved_kyc(db: Session, customer_id: int) -> bool:
+    """True when a human reviewer has approved a KYC application linked to this customer.
+
+    Identity verification (KYC) must come before opening an account, as in a real bank.
+    """
+    return (
+        db.scalar(
+            select(func.count())
+            .select_from(CustomerKycLink)
+            .join(KYCApplication, KYCApplication.id == CustomerKycLink.application_id)
+            .where(
+                CustomerKycLink.customer_id == customer_id,
+                KYCApplication.status == ApplicationStatus.APPROVED.value,
+            )
+        )
+        or 0
+    ) > 0
 
 
 class AccountOpeningReviewRequest(BaseModel):
@@ -181,6 +203,7 @@ def get_account_opening_request(
 
     response_data["customer_name"] = customer.full_name_ar
     response_data["customer_ref"] = customer.customer_ref
+    response_data["kyc_approved"] = customer_has_approved_kyc(db, customer.id)
 
     return AccountOpeningDetail.model_validate(response_data)
 
@@ -219,6 +242,12 @@ def review_account_opening_request(
         raise HTTPException(
             status_code=409,
             detail="انتقال حالة طلب فتح الحساب غير مسموح به.",
+        )
+
+    if new_status == "approved" and not customer_has_approved_kyc(db, request.customer_id):
+        raise HTTPException(
+            status_code=409,
+            detail="لا يمكن اعتماد فتح الحساب قبل اعتماد طلب التحقق من هوية العميل (KYC).",
         )
 
     try:
