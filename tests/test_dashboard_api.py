@@ -265,7 +265,8 @@ def test_recent_activity_is_newest_first_without_details(seeded):
 @pytest.mark.parametrize(
     ("path", "media"),
     [("/dashboard", "text/html"), ("/dashboard/style.css", "text/css")]
-    + [(f"/dashboard/{n}.js", "text/javascript") for n in ("app", "util", "v_overview", "v_lists", "v_kyc", "v_policy", "v_admin", "v_explain")],
+    + [(f"/dashboard/{n}.js", "text/javascript") for n in ("app", "util", "v_overview", "v_lists", "v_kyc", "v_policy", "v_admin", "v_explain", "v_portal")]
+    + [("/dashboard/cairo-400.woff", "font/woff"), ("/dashboard/cairo-700.woff", "font/woff")],
 )
 def test_static_files_are_served_with_strict_headers(ctx, path, media):
     response = ctx.client.get(path)
@@ -273,6 +274,7 @@ def test_static_files_are_served_with_strict_headers(ctx, path, media):
     assert response.headers["content-type"].startswith(media)
     csp = response.headers["content-security-policy"]
     assert "default-src 'none'" in csp and "script-src 'self'" in csp and "frame-ancestors 'none'" in csp
+    assert "font-src 'self'" in csp
     assert "unsafe-inline" not in csp and "unsafe-eval" not in csp
     assert response.headers["x-content-type-options"] == "nosniff"
     assert response.headers["cache-control"] == "no-store"
@@ -293,7 +295,7 @@ SCRIPTS = sorted(p.name for p in WEB.glob("*.js"))
 
 
 def test_every_script_file_is_served():
-    assert len(SCRIPTS) >= 8
+    assert len(SCRIPTS) >= 9
     client = TestClient(app)
     for name in SCRIPTS:
         assert client.get(f"/dashboard/{name}").status_code == 200, name
@@ -326,3 +328,9 @@ def test_me_returns_identity_and_role(ctx, role):
 
 def test_me_requires_authentication(ctx):
     assert ctx.client.get("/api/v1/auth/me").status_code == 401
+
+
+def test_root_redirects_to_dashboard(ctx):
+    response = ctx.client.get("/", follow_redirects=False)
+    assert response.status_code == 307
+    assert response.headers["location"] == "/dashboard"

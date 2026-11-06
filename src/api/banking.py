@@ -4,6 +4,8 @@
 from datetime import datetime
 from typing import Literal
 
+from uuid import uuid4
+
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import func, or_, select
@@ -222,6 +224,21 @@ def review_account_opening_request(
     try:
         request.status = new_status
         request.review_notes = payload.notes.strip()
+
+        opened_account = None
+        if new_status == "approved":
+            # Simulation: an approved opening request creates the (simulated) active account,
+            # so the customer can then request a card for it.
+            opened_account = BankAccount(
+                account_ref=f"TMP-{uuid4().hex[:20]}",
+                customer_id=request.customer_id,
+                account_type=request.account_type,
+                status="active",
+                simulation_only=True,
+            )
+            db.add(opened_account)
+            db.flush()
+            opened_account.account_ref = f"SIM-ACC-{opened_account.id:06d}"
 
         audit_event = BankingAuditEvent(
             entity_type="account_opening_request",

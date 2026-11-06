@@ -211,7 +211,7 @@ def test_audit_viewer_paginates(ctx):
 # ------------------------------------------------------------------- system
 def test_system_status_has_no_secrets(ctx):
     body = ctx.client.get(f"{BASE}/system", headers=ctx.headers()).json()
-    assert body["users_by_role"] == {"admin": 1, "reviewer": 1, "viewer": 1}
+    assert body["users_by_role"] == {"admin": 1, "reviewer": 1, "viewer": 1, "customer": 0}
     assert body["database"] == "sqlite" and body["llm_provider"] in ("none", "ollama")
     text = str(body).lower()
     assert "secret" not in text and "jwt" not in text and "password" not in text

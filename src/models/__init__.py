@@ -1,4 +1,4 @@
-﻿"""Central model imports for SQLAlchemy metadata registration."""
+"""Central model imports for SQLAlchemy metadata registration."""
 
 from src.models.kyc import (
     ApplicationStatus,
@@ -41,3 +41,4 @@ __all__ = [
     "Complaint",
     "Customer",
 ]
+from src.models.portal import CustomerAccount, CustomerKycLink  # noqa: E402,F401

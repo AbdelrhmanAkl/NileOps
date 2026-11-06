@@ -1,6 +1,7 @@
 import { h, api, qs, replace, when, label, pill, table, pager, loading, errorBox, help, toast, confirmDialog, formDialog, busy, field, fmt, bars } from "./util.js";
 
-const ROLES = [["viewer", "مشاهد"], ["reviewer", "مراجع"], ["admin", "مدير"]];
+const STAFF_ROLES = [["viewer", "مشاهد"], ["reviewer", "مراجع"], ["admin", "مدير"]];
+const ROLES = [...STAFF_ROLES, ["customer", "عميل (بوابة العميل)"]];
 
 export async function usersView(root, session) {
   const render = async () => {
@@ -9,7 +10,8 @@ export async function usersView(root, session) {
     const run = async (promise, ok) => { try { await promise; toast(ok); await render(); } catch (e) { if (e.name === "AuthError") throw e; toast(e.message, "error"); } };
     const rows = users.map((u) => {
       const me = u.username === session.username;
-      const role = h("select", { "aria-label": `دور ${u.username}`, disabled: me }, ROLES.map(([v, t]) => h("option", { value: v, selected: v === u.role }, t)));
+      const isCustomer = u.role === "customer";
+      const role = h("select", { "aria-label": `دور ${u.username}`, disabled: me || isCustomer }, (isCustomer ? ROLES : STAFF_ROLES).map(([v, t]) => h("option", { value: v, selected: v === u.role }, t)));
       role.addEventListener("change", async () => {
         const r = await confirmDialog({ title: "تغيير الدور", body: `تغيير دور ${u.username} إلى ${label("role", role.value)}؟`, confirmText: "تغيير" });
         if (r.ok) await run(api(`/api/v1/admin/users/${u.id}`, { method: "PATCH", json: { role: role.value } }), "تم تغيير الدور."); else await render();
@@ -28,11 +30,12 @@ export async function usersView(root, session) {
       const v = await formDialog({ title: "مستخدم جديد", submitText: "إنشاء", fields: [
         { name: "username", label: "اسم المستخدم", dir: "ltr", minlength: 3, help: "حروف إنجليزية وأرقام و _ . - فقط." },
         { name: "password", label: "كلمة المرور", type: "password", dir: "ltr", minlength: 12 },
-        { name: "role", label: "الدور", type: "select", options: ROLES }] });
-      if (v) await run(api("/api/v1/admin/users", { method: "POST", json: v }), "تم إنشاء المستخدم.");
+        { name: "role", label: "الدور", type: "select", options: ROLES },
+        { name: "full_name", label: "اسم العميل (مطلوب لحساب العميل فقط)", required: false }] });
+      if (v) await run(api("/api/v1/admin/users", { method: "POST", json: { ...v, full_name: v.full_name.trim() || null } }), "تم إنشاء المستخدم.");
     } }, "مستخدم جديد");
     replace(root, h("div", { class: "page-head" }, h("h2", {}, "المستخدمون"), add),
-      help("المشاهد يقرأ فقط (مع إخفاء الرقم القومي والموبايل). المراجع يتخذ القرارات. المدير يدير المستخدمين ويرى سجل التدقيق. لا يمكنك تعديل حسابك أو إيقافه."),
+      help("المشاهد يقرأ فقط (مع إخفاء الرقم القومي والموبايل). المراجع يتخذ القرارات. المدير يدير المستخدمين ويرى سجل التدقيق. العميل يدخل بوابته ويرى طلباته فقط (يسجّل بنفسه أو تنشئ له حسابًا). لا يمكنك تعديل حسابك أو إيقافه."),
       table(["المستخدم", "الدور", "الحالة", "أُنشئ", "إجراءات"], rows, { caption: "المستخدمون" }));
   };
   await render();

@@ -25,12 +25,13 @@ from src.db.session import get_db
 from src.models.banking import BankingAuditEvent
 from src.models.kyc import AuditEvent
 from src.models.policies import PolicyDocument
+from src.api.portal import create_customer_profile
 from src.models.user import ALLOWED_ROLES, User
 
 router = APIRouter(prefix="/api/v1/admin", tags=["إدارة النظام"])
 _ADMIN = require_roles("admin")
 _USERNAME = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.-]{2,49}$")
-Role = Literal["admin", "reviewer", "viewer"]
+Role = Literal["admin", "reviewer", "viewer", "customer"]
 DETAIL_LIMIT = 300
 
 
@@ -50,6 +51,7 @@ class UserCreate(BaseModel):
     username: str = Field(min_length=3, max_length=50)
     password: str = Field(min_length=1, max_length=200)
     role: Role
+    full_name: str | None = Field(default=None, max_length=100, description="مطلوب عند إنشاء حساب عميل")
 
 
 class UserUpdate(BaseModel):
@@ -110,10 +112,15 @@ def create_user(payload: UserCreate, admin: User = Depends(_ADMIN), db: Session 
         raise HTTPException(status_code=422, detail=str(exc)) from exc
     if db.scalar(select(User).where(func.lower(User.username) == username.lower())):
         raise HTTPException(status_code=409, detail="اسم المستخدم مستخدم من قبل.")
+    full_name = (payload.full_name or "").strip()
+    if payload.role == "customer" and len(full_name) < 3:
+        raise HTTPException(status_code=422, detail="اسم العميل مطلوب (3 أحرف على الأقل) عند إنشاء حساب عميل.")
     user = User(username=username, password_hash=hash_password(payload.password), role=payload.role, is_active=True)
     try:
         db.add(user)
         db.flush()
+        if payload.role == "customer":
+            create_customer_profile(db, user, full_name)
         _audit(db, admin, user.id, "USER_CREATED", f"إنشاء مستخدم بدور «{payload.role}».")
         db.commit()
     except IntegrityError as exc:
@@ -137,6 +144,8 @@ def update_user(
     if removes_admin and _active_admins(db) <= 1:
         raise HTTPException(status_code=409, detail="لا يمكن إزالة آخر مدير نشط في النظام.")
 
+    if payload.role is not None and payload.role != user.role and "customer" in (payload.role, user.role):
+        raise HTTPException(status_code=409, detail="لا يمكن تحويل حساب عميل إلى موظف أو العكس؛ أنشئ حسابًا جديدًا.")
     changes = []
     if payload.role is not None and payload.role != user.role:
         changes.append(f"الدور من «{user.role}» إلى «{payload.role}»")

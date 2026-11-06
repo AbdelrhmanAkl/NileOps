@@ -9,6 +9,8 @@ from src.core.security import hash_password
 from src.db.session import SessionLocal, engine
 from src.models.user import ALLOWED_ROLES, User
 
+STAFF_ROLES = tuple(r for r in ALLOWED_ROLES if r != "customer")  # customers register in the portal
+
 
 MIN_PASSWORD_LENGTH = 12
 MAX_PASSWORD_LENGTH = 128
@@ -27,7 +29,7 @@ def create_user() -> None:
 
     role = input("Role (admin/reviewer/viewer): ").strip().lower()
 
-    if role not in ALLOWED_ROLES:
+    if role not in STAFF_ROLES:
         raise ValueError("Invalid role.")
 
     password = getpass("Password (input hidden): ")

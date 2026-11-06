@@ -203,11 +203,11 @@ def dashboard_summary(
 # The page is public (it holds no data); every number comes from the API above
 # with a bearer token. Fixed file names only: no path parameter, no traversal.
 _CSP = (
-    "default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'self'; "
+    "default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'self'; font-src 'self'; "
     "img-src 'self' data:; base-uri 'none'; form-action 'none'; frame-ancestors 'none'"
 )
-_ASSET = re.compile(r"^[a-z0-9_-]{1,40}\.(js|css)$")
-_ASSET_TYPES = {"js": "text/javascript; charset=utf-8", "css": "text/css; charset=utf-8"}
+_ASSET = re.compile(r"^[a-z0-9_-]{1,40}\.(js|css|woff)$")
+_ASSET_TYPES = {"js": "text/javascript; charset=utf-8", "css": "text/css; charset=utf-8", "woff": "font/woff"}
 _SECURITY_HEADERS = {
     "Content-Security-Policy": _CSP,
     "X-Content-Type-Options": "nosniff",

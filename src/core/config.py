@@ -1,4 +1,4 @@
-﻿
+
 from functools import lru_cache
 from pathlib import Path
 from typing import Literal
@@ -27,6 +27,8 @@ class Settings(BaseSettings):
     # Deployment hardening. ALLOWED_HOSTS is a comma-separated list (e.g. "ops.example.com").
     allowed_hosts: str = "*"
     docs_enabled: bool = True
+    # Customer portal: let visitors create their own customer account.
+    allow_self_registration: bool = True
 
     upload_dir: str = "storage"
     max_upload_size_mb: int = Field(default=10, ge=1, le=50)

@@ -13,7 +13,8 @@ from src.models.user import User
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/token")
 
-VIEW_ROLES = {"viewer", "reviewer", "admin"}
+VIEW_ROLES = {"viewer", "reviewer", "admin"}  # staff roles
+ALL_ROLES = VIEW_ROLES | {"customer"}
 
 
 def get_current_user(
@@ -49,7 +50,7 @@ def get_current_user(
     if user is None or not user.is_active:
         raise credentials_error
 
-    if user.role not in VIEW_ROLES:
+    if user.role not in ALL_ROLES:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Your account role does not permit application access.",
@@ -74,3 +75,15 @@ def require_roles(*allowed_roles: str):
         return current_user
 
     return role_checker
+
+
+def require_customer(
+    current_user: Annotated[User, Depends(get_current_user)],
+) -> User:
+    """Allow bank customers only (the customer portal)."""
+    if current_user.role != "customer":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="This area is for bank customers only.",
+        )
+    return current_user

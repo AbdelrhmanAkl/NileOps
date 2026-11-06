@@ -1,8 +1,9 @@
-﻿
+
 from datetime import datetime
 from typing import Literal
 
 from fastapi import Depends, FastAPI, HTTPException, Query, Request
+from fastapi.responses import RedirectResponse
 from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import func, or_, select, text
 from sqlalchemy.exc import SQLAlchemyError
@@ -17,6 +18,7 @@ from src.api.dashboard import web_router as dashboard_web_router
 from src.api.documents import router as documents_router
 from src.api.explanations import router as explanations_router
 from src.api.policies import router as policies_router
+from src.api.portal import router as portal_router
 from src.core.auth import require_roles
 from src.core.config import get_settings
 from src.db.session import get_db
@@ -67,6 +69,12 @@ async def security_headers(request: Request, call_next):
     return response
 
 
+@app.get("/", include_in_schema=False)
+def root() -> RedirectResponse:
+    """Send visitors of the bare address to the dashboard."""
+    return RedirectResponse("/dashboard", status_code=307)
+
+
 app.include_router(auth_router)
 app.include_router(admin_router)
 app.include_router(banking_router)
@@ -76,6 +84,7 @@ app.include_router(dashboard_router)
 app.include_router(dashboard_web_router)
 app.include_router(explanations_router)
 app.include_router(policies_router)
+app.include_router(portal_router)
 
 
 class ApplicationSummary(BaseModel):

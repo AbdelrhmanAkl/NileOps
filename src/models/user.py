@@ -13,7 +13,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 from src.db.session import Base
 
 
-ALLOWED_ROLES = ("admin", "reviewer", "viewer")
+ALLOWED_ROLES = ("admin", "reviewer", "viewer", "customer")
 
 
 def utc_now() -> datetime:
@@ -28,7 +28,7 @@ class User(Base):
 
     __table_args__ = (
         CheckConstraint(
-            "role IN ('admin', 'reviewer', 'viewer')",
+            "role IN ('admin', 'reviewer', 'viewer', 'customer')",
             name="ck_users_role",
         ),
     )

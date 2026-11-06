@@ -154,21 +154,11 @@ def _get_file(db: Session, document_id: int, file_id: int) -> DocumentFile:
 
 
 # ------------------------------------------------------------------ endpoints
-@router.post(
-    "/{document_id}/files",
-    response_model=UploadResponse,
-    status_code=201,
-    summary="رفع ملف مستند (PNG / JPEG / PDF) بشكل آمن",
-)
-async def upload_document_file(
-    document_id: int,
-    file: UploadFile = File(...),
-    current_user: User = Depends(require_roles("reviewer", "admin")),
-    db: Session = Depends(get_db),
+async def save_document_upload(
+    db: Session, document: KYCDocument, file: UploadFile, username: str, actor_type: str = "human"
 ) -> UploadResponse:
+    """Validate, store and record an uploaded file for a document (shared by staff and customer portal)."""
     settings = get_settings()
-    document = _get_document(db, document_id, for_update=True)
-
     if document.status not in UPLOADABLE_STATUSES:
         raise HTTPException(
             status_code=409,
@@ -199,7 +189,7 @@ async def upload_document_file(
             content_type=stored.content_type,
             size_bytes=stored.size_bytes,
             sha256=stored.sha256,
-            uploaded_by=current_user.username,
+            uploaded_by=username,
         )
         db.add(record)
         document.file_name = stored.original_name
@@ -210,8 +200,8 @@ async def upload_document_file(
             AuditEvent(
                 application_id=document.application_id,
                 action="DOCUMENT_UPLOADED",
-                actor_type="human",
-                actor_name=current_user.username,
+                actor_type=actor_type,
+                actor_name=username,
                 details_ar=f"تم رفع ملف للمستند «{document.document_type}» (رقم المستند {document.id}).",
                 previous_status=previous_status,
                 new_status=document.status,
@@ -233,6 +223,22 @@ async def upload_document_file(
         db.rollback()
         delete_file(stored.path)
         raise HTTPException(status_code=500, detail="تعذر حفظ بيانات الملف.") from exc
+
+
+@router.post(
+    "/{document_id}/files",
+    response_model=UploadResponse,
+    status_code=201,
+    summary="رفع ملف مستند (PNG / JPEG / PDF) بشكل آمن",
+)
+async def upload_document_file(
+    document_id: int,
+    file: UploadFile = File(...),
+    current_user: User = Depends(require_roles("reviewer", "admin")),
+    db: Session = Depends(get_db),
+) -> UploadResponse:
+    document = _get_document(db, document_id, for_update=True)
+    return await save_document_upload(db, document, file, current_user.username)
 
 
 @router.get(

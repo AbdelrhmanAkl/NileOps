@@ -84,3 +84,7 @@ class LoginThrottle:
 
 
 login_throttle = LoginThrottle()
+
+
+# Self-registration: at most 5 new customer accounts per client address per hour.
+register_throttle = LoginThrottle(pair_limit=5, address_limit=5, window_seconds=3600, lock_seconds=3600)

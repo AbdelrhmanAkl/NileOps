@@ -1,7 +1,5 @@
 # NileOps — Digital Banking Operations Employee
 
-
-
 NileOps is a portfolio-grade digital banking operations backend focused on Know Your Customer (KYC) onboarding, deterministic validation, human review, authentication, authorization, and auditability.
 
 The project combines explicit business rules with a controlled review workflow. OCR, a policy knowledge assistant (RAG, optional local Qwen), AI-assisted explanations and a role-based web dashboard support document processing and policy questions without replacing human decision-making.
@@ -455,3 +453,11 @@ OCR and AI components must remain assistive. Final consequential banking decisio
 7. Never commit local databases, secrets, or private documents.
 8. Run the full test suite before requesting review.
 9. Document implemented features separately from planned work.
+## Customer portal (simulation)
+
+Roles: `viewer`, `reviewer`, `admin` (staff) and `customer`. A customer can self-register
+(`POST /api/v1/portal/register`, switch off with `ALLOW_SELF_REGISTRATION=false`) or be created by an
+admin (`POST /api/v1/admin/users` with `role=customer` and `full_name`). Customers only reach
+`/api/v1/portal/*`, see only their own requests, and never see internal notes, routing or staff names.
+Approving an account-opening request creates a **simulated** account; no real banking integration exists.
+Demo login: `demo_customer` / `Demo-Pass-2026!` after `python -m scripts.setup_demo`. Synthetic data only.

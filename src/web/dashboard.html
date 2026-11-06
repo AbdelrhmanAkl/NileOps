@@ -3,34 +3,57 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>NileOps | لوحة العمليات</title>
+  <title>NileOps | منصة العمليات المصرفية</title>
   <link rel="stylesheet" href="/dashboard/style.css">
 </head>
 <body>
   <a class="skip" href="#view">تخطَّ إلى المحتوى</a>
   <header class="topbar">
-    <div class="brand"><span class="logo" aria-hidden="true">N</span><div><h1>NileOps</h1><p>مساعد العمليات البنكية</p></div></div>
+    <div class="brand"><span class="logo" aria-hidden="true">N</span><div><h1>NileOps</h1><p>موظف العمليات المصرفية الرقمية</p></div></div>
     <div class="session" id="session" hidden>
       <span id="who"></span>
       <button type="button" id="refresh" class="ghost">تحديث</button>
       <button type="button" id="logout" class="ghost">تسجيل الخروج</button>
     </div>
   </header>
-  <div class="banner" role="note">بيانات اصطناعية للتجربة. الذكاء الاصطناعي والقراءة الآلية يساعدان فقط، والقرار النهائي للموظف. <span id="role-note"></span></div>
+  <div class="banner" role="note">نسخة تجريبية ببيانات اصطناعية، ولا تُنفَّذ أي عملية مالية حقيقية. <span id="role-note"></span></div>
 
   <div class="layout">
     <nav id="nav" class="nav" aria-label="أقسام النظام"></nav>
     <main>
-      <section id="login" class="card narrow">
-        <h2>تسجيل الدخول</h2>
-        <form id="login-form" autocomplete="off">
-          <label for="username">اسم المستخدم</label>
-          <input id="username" name="username" required autocomplete="username" dir="ltr">
-          <label for="password">كلمة المرور</label>
-          <input id="password" name="password" type="password" required autocomplete="current-password" dir="ltr">
-          <button type="submit" class="primary">دخول</button>
+      <section id="login" class="auth">
+        <div class="auth-hero">
+          <h2>عمليات مصرفية <span>أسرع</span> وأوضح</h2>
+          <p>استقبال الطلبات والمستندات ومتابعتها في مكان واحد، بقواعد واضحة ومراجعة بشرية في كل قرار.</p>
+          <ul><li>تابع طلباتك وشكاواك لحظة بلحظة</li><li>ارفع مستنداتك بأمان</li><li>كل إجراء مسجَّل وقابل للمراجعة</li></ul>
+        </div>
+        <div class="auth-panel">
+          <div class="tabs" role="tablist" aria-label="الدخول أو التسجيل">
+            <button type="button" role="tab" id="tab-login" aria-selected="true">تسجيل الدخول</button>
+            <button type="button" role="tab" id="tab-register" aria-selected="false">حساب عميل جديد</button>
+          </div>
+          <form id="login-form" autocomplete="off">
+            <label for="username">اسم المستخدم</label>
+            <input id="username" name="username" required autocomplete="username" dir="ltr">
+            <label for="password">كلمة المرور</label>
+            <input id="password" name="password" type="password" required autocomplete="current-password" dir="ltr">
+            <button type="submit" class="primary">دخول</button>
+          </form>
+          <form id="register-form" autocomplete="off" hidden>
+            <label for="reg-name">الاسم الكامل</label>
+            <input id="reg-name" required minlength="3" maxlength="100">
+            <label for="reg-user">اسم المستخدم</label>
+            <input id="reg-user" required minlength="3" maxlength="50" dir="ltr" autocomplete="username">
+            <p class="muted">حروف إنجليزية وأرقام و _ . - فقط.</p>
+            <label for="reg-pass">كلمة المرور</label>
+            <input id="reg-pass" type="password" required minlength="12" dir="ltr" autocomplete="new-password">
+            <p class="muted">12 حرفًا على الأقل وتجمع 3 أنواع (صغيرة، كبيرة، أرقام، رموز).</p>
+            <label for="reg-pass2">تأكيد كلمة المرور</label>
+            <input id="reg-pass2" type="password" required dir="ltr" autocomplete="new-password">
+            <button type="submit" class="primary">إنشاء الحساب</button>
+          </form>
           <p id="login-error" class="error" role="alert" hidden></p>
-        </form>
+        </div>
       </section>
       <section id="app" hidden><div id="view" class="view" tabindex="-1"></div></section>
     </main>

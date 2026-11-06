@@ -184,6 +184,43 @@ def _count_by(db: Session, column) -> dict[str, int]:
     return {str(key): count for key, count in rows if key is not None}
 
 
+def register_complaint(
+    db: Session, description: str, category: str | None, customer_id: int | None, user: User | None
+):
+    """Classify, route, save and audit a new complaint. Shared by staff entry and the customer portal."""
+    result = classify_complaint(description, category)
+    status = "classified" if result.needs_human_triage else "assigned"
+    try:
+        complaint = Complaint(
+            complaint_number=f"TMP-{uuid4().hex}",
+            customer_id=customer_id,
+            category=result.category,
+            description=description.strip(),
+            priority=result.priority,
+            status=status,
+            assigned_department=result.department,
+            routing_reason=result.routing_reason,
+            suggested_reply=result.suggested_reply,
+        )
+        db.add(complaint)
+        db.flush()
+        complaint.complaint_number = f"SIM-COMP-{complaint.id:06d}"
+        _audit(db, complaint, "COMPLAINT_CREATED", user, "تم تسجيل شكوى جديدة في بيئة المحاكاة.")
+        routing_text = (
+            "بانتظار فرز بشري" if result.needs_human_triage else f"تم التوجيه تلقائيًا إلى: {result.department}"
+        )
+        _audit(
+            db, complaint, "AUTO_CLASSIFIED", None,
+            f"التصنيف: {result.category}. الأولوية: {result.priority}. {routing_text}.",
+        )
+        db.commit()
+        db.refresh(complaint)
+    except SQLAlchemyError as exc:
+        db.rollback()
+        raise HTTPException(status_code=500, detail="تعذر حفظ الشكوى.") from exc
+    return complaint, result
+
+
 @router.post(
     "",
     response_model=ComplaintCreateResponse,
@@ -199,52 +236,9 @@ def create_complaint(
         if db.get(Customer, payload.customer_id) is None:
             raise HTTPException(status_code=404, detail="العميل غير موجود.")
 
-    result = classify_complaint(payload.description, payload.category)
-    status = "classified" if result.needs_human_triage else "assigned"
-
-    try:
-        complaint = Complaint(
-            complaint_number=f"TMP-{uuid4().hex}",
-            customer_id=payload.customer_id,
-            category=result.category,
-            description=payload.description.strip(),
-            priority=result.priority,
-            status=status,
-            assigned_department=result.department,
-            routing_reason=result.routing_reason,
-            suggested_reply=result.suggested_reply,
-        )
-        db.add(complaint)
-        db.flush()
-        complaint.complaint_number = f"SIM-COMP-{complaint.id:06d}"
-
-        _audit(
-            db,
-            complaint,
-            "COMPLAINT_CREATED",
-            current_user,
-            "تم تسجيل شكوى جديدة في بيئة المحاكاة.",
-        )
-        routing_text = (
-            "بانتظار فرز بشري"
-            if result.needs_human_triage
-            else f"تم التوجيه تلقائيًا إلى: {result.department}"
-        )
-        _audit(
-            db,
-            complaint,
-            "AUTO_CLASSIFIED",
-            None,
-            (
-                f"التصنيف: {result.category}. الأولوية: {result.priority}. "
-                f"{routing_text}."
-            ),
-        )
-        db.commit()
-        db.refresh(complaint)
-    except SQLAlchemyError as exc:
-        db.rollback()
-        raise HTTPException(status_code=500, detail="تعذر حفظ الشكوى.") from exc
+    complaint, result = register_complaint(
+        db, payload.description, payload.category, payload.customer_id, current_user
+    )
 
     return ComplaintCreateResponse(
         message="تم تسجيل الشكوى بنجاح.",

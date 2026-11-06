@@ -38,3 +38,17 @@ Put a TLS reverse proxy in front (the compose file binds to `127.0.0.1` only) an
 - Local LLM (optional): run Ollama, `ollama pull qwen2.5:7b-instruct`, set `LLM_PROVIDER=ollama`, `LLM_BASE_URL`, `LLM_MODEL`. Without it the assistant answers extractively from policy text.
 - Add or change policies by editing `knowledge/policies/*.md` (bump `version`), then admin → "System status" → reload policies.
 - Read `docs/security.md` for known limits.
+
+## Upgrading to the customer portal (Phase 8)
+
+The `users.role` CHECK constraint now allows `customer`, and two link tables were added
+(`portal_customer_accounts`, `portal_kyc_links`). `create_all` cannot alter an existing
+table, so an existing **development/demo** database must be recreated:
+
+```powershell
+python -m scripts.reset_demo --yes     # wipes data + uploads, reseeds synthetic demo data
+```
+
+(or delete `data/nileops.db` and run `python -m scripts.setup_demo`). `reset_demo` refuses to run
+when `APP_ENV=production`. Never do this to a database holding data you need; back it up first
+with `python -m scripts.backup_db`. Formal migrations (Alembic) are planned.

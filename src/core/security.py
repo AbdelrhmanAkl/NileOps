@@ -10,7 +10,7 @@ from src.core.config import get_settings
 
 password_hash = PasswordHash.recommended()
 
-ALLOWED_ROLES = {"admin", "reviewer", "viewer"}
+ALLOWED_ROLES = {"admin", "reviewer", "viewer", "customer"}
 
 
 def hash_password(password: str) -> str:
