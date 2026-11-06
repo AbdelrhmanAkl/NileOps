@@ -116,3 +116,5 @@ dialog.dlg::backdrop { background: rgba(0,0,0,.5); }
 .view a { color: var(--primary); }
 .view .grid2 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 440px), 1fr)); }
 td span[dir="ltr"] { white-space: nowrap; }
+input[type="file"] { padding: 6px; }
+input[type="file"]::file-selector-button { font: inherit; margin-inline-end: 10px; padding: 6px 14px; border-radius: 6px; border: 1px solid var(--border); background: var(--accent); color: var(--text); cursor: pointer; }

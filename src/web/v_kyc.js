@@ -21,6 +21,7 @@ function fieldsView(data) {
     h("p", { class: "muted" }, data.ai_note));
 }
 
+const READ_DONE = new Set(["completed", "needs_review"]); // needs_review = read OK, some fields flagged
 const openDocs = new Set(); // keeps a document panel open across re-renders (after upload/OCR/decision)
 
 function documentCard(doc, session, reload) {
@@ -36,12 +37,12 @@ function documentCard(doc, session, reload) {
     try {
       const files = await api(`/api/v1/kyc/documents/${doc.id}/files`);
       replace(filesBox, files.length === 0 ? empty("لم يُرفع ملف بعد.") : table(["الملف", "الحجم", "القراءة", "رُفع بواسطة", ""], files.map((f) => {
-        const read = h("button", { type: "button" }, f.ocr_status === "completed" ? "إعادة القراءة" : "قراءة المستند (OCR)");
+        const read = h("button", { type: "button" }, READ_DONE.has(f.ocr_status) ? "إعادة القراءة" : "قراءة المستند (OCR)");
         read.addEventListener("click", busy(read, async () => {
           try { const r = await api(`/api/v1/kyc/documents/${doc.id}/files/${f.id}/extract`, { method: "POST" }); toast(r.message); replace(fieldsBox, fieldsView(r)); await loadFiles2(); }
           catch (e) { if (e.name === "AuthError") throw e; toast(e.message, "error"); }
         }));
-        const view = f.ocr_status === "completed" ? h("button", { type: "button", onclick: () => showFields(f.id) }, "عرض الحقول") : null;
+        const view = READ_DONE.has(f.ocr_status) ? h("button", { type: "button", onclick: () => showFields(f.id) }, "عرض الحقول") : null;
         return [h("span", { dir: "auto" }, f.original_name), h("span", { dir: "ltr" }, bytes(f.size_bytes)), pill(label("ocr", f.ocr_status), f.ocr_status), f.uploaded_by, h("div", { class: "actions" }, view, canReview(session) ? read : null)];
       })));
     } catch (e) { if (e.name === "AuthError") throw e; replace(filesBox, errorBox(e.message)); }
