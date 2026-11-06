@@ -99,6 +99,16 @@ class Settings(BaseSettings):
                 "APP_DEBUG must be false in production."
             )
 
+        if self.app_env == "production":
+            if self.allowed_host_list == ["*"]:
+                raise ValueError(
+                    "ALLOWED_HOSTS must list the real host names in production (not '*')."
+                )
+            if self.docs_enabled:
+                raise ValueError(
+                    "DOCS_ENABLED must be false in production."
+                )
+
         return self
 
 

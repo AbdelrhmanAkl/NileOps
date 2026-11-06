@@ -30,3 +30,9 @@ NileOps is a portfolio/MVP system on **synthetic data**. This page lists what is
 ## Before any real use
 
 Security review and penetration test, TLS everywhere, secrets manager, encrypted storage and backups, centralized logging/monitoring, data-protection and regulatory review.
+
+## Production guard (enforced in code)
+
+With `APP_ENV=production` the application refuses to start unless `ALLOWED_HOSTS` lists real host
+names (not `*`), `DOCS_ENABLED=false` and `APP_DEBUG=false`. The JWT secret must be a real random value
+in every environment. This is a startup check only; TLS must still be terminated by a reverse proxy.
