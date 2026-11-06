@@ -44,10 +44,12 @@ def make_handler(reply: bytes, status: int = 200, seen: list | None = None):
     class Handler(BaseHTTPRequestHandler):
         def do_POST(self):  # noqa: N802
             length = int(self.headers.get("Content-Length", 0))
+            raw = self.rfile.read(length)  # always drain the body, or Windows resets the connection
             if seen is not None:
-                seen.append((self.path, json.loads(self.rfile.read(length))))
+                seen.append((self.path, json.loads(raw)))
             self.send_response(status)
             self.send_header("Content-Type", "application/json")
+            self.send_header("Content-Length", str(len(reply)))
             self.end_headers()
             self.wfile.write(reply)
 
