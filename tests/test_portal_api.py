@@ -419,3 +419,17 @@ def test_account_cannot_be_approved_before_the_customers_kyc_is_approved(ctx):
     assert ctx.client.get(f"/api/v1/banking/account-opening/{req['id']}", headers=reviewer).json()["kyc_approved"] is True
     assert ctx.client.post(review, headers=reviewer, json={"decision": "approved", "notes": "موافقة"}).status_code == 200
     assert len(ctx.client.get(f"{P}/overview", headers=h).json()["accounts"]) == 1
+
+
+def test_staff_notes_never_store_long_identifier_numbers(ctx):
+    h = ctx.new_customer("laila")
+    reviewer = ctx.staff("reviewer")
+    req = ctx.client.post(f"{P}/account-requests", headers=h, json={"account_type": "savings"}).json()
+    note = "العميل رقمه القومي 29901011234567 وموبايله 01012345678"
+    r = ctx.client.post(f"/api/v1/banking/account-opening/{req['id']}/review", headers=reviewer, json={"decision": "under_review", "notes": note})
+    assert r.status_code == 200
+    with ctx.factory() as db:
+        events = db.scalars(select(BankingAuditEvent).where(BankingAuditEvent.action == "HUMAN_REVIEW")).all()
+        assert events and all("29901011234567" not in e.details_ar and "01012345678" not in e.details_ar for e in events)
+    detail = ctx.client.get(f"/api/v1/banking/account-opening/{req['id']}", headers=reviewer).json()
+    assert "29901011234567" not in (detail["review_notes"] or "")

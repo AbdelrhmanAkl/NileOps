@@ -36,3 +36,11 @@ Security review and penetration test, TLS everywhere, secrets manager, encrypted
 With `APP_ENV=production` the application refuses to start unless `ALLOWED_HOSTS` lists real host
 names (not `*`), `DOCS_ENABLED=false` and `APP_DEBUG=false`. The JWT secret must be a real random value
 in every environment. This is a startup check only; TLS must still be terminated by a reverse proxy.
+
+## Staff notes and personal data
+
+Reviewer/assignment notes are free text and are copied into review records and the audit trail.
+Before storing, `src/core/pii.py` masks digit sequences of 8 or more digits (national IDs, phones, card/account
+numbers, including Arabic-Indic digits) as `[رقم محجوب]`. Names and addresses cannot be detected reliably and
+are **not** masked; the note dialog warns staff not to enter personal data. The audit trail is a normal
+database table (not tamper-proof): a hash chain is planned.

@@ -12,6 +12,7 @@ from sqlalchemy import func, or_, select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
+from src.core.pii import StaffNote
 from src.core.auth import require_roles
 from src.db.session import get_db
 from src.models.banking import (
@@ -89,7 +90,7 @@ class AccountOpeningReviewRequest(BaseModel):
         "approved",
         "rejected",
     ]
-    notes: str = Field(min_length=3, max_length=2000)
+    notes: StaffNote
 
 
 class AccountOpeningReviewResponse(BaseModel):
@@ -340,7 +341,7 @@ class CardIssuanceReviewRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     decision: Literal["under_review", "approved", "rejected", "cancelled"]
-    notes: str = Field(min_length=3, max_length=2000)
+    notes: StaffNote
 
 
 class CardIssuanceActionResponse(BaseModel):

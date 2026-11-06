@@ -14,6 +14,7 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.orm import Session
 
+from src.core.pii import StaffNote
 from src.core.auth import require_roles
 from src.core.config import get_settings
 from src.db.session import get_db
@@ -112,7 +113,7 @@ class DocumentReviewRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     decision: Literal["VALID", "INVALID", "EXPIRED", "UNDER_REVIEW"]
-    notes: str = Field(min_length=3, max_length=2000)
+    notes: StaffNote
 
 
 class DocumentReviewResponse(BaseModel):

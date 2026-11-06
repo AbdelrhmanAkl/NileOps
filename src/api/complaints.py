@@ -15,6 +15,7 @@ from sqlalchemy import func, or_, select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
+from src.core.pii import StaffNote
 from src.core.auth import require_roles
 from src.db.session import get_db
 from src.models.banking import BankingAuditEvent, Complaint, Customer
@@ -118,14 +119,14 @@ class ComplaintAssignRequest(BaseModel):
 
     department: DepartmentName
     priority: Priority | None = None
-    notes: str = Field(min_length=3, max_length=2000)
+    notes: StaffNote
 
 
 class ComplaintStatusRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     status: Literal["in_progress", "resolved", "closed"]
-    notes: str = Field(min_length=3, max_length=2000)
+    notes: StaffNote
 
 
 class ComplaintActionResponse(BaseModel):

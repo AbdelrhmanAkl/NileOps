@@ -1,6 +1,7 @@
 ﻿from collections.abc import Generator
 
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, event
+from sqlalchemy.engine import Engine
 from sqlalchemy.engine import make_url
 from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
 
@@ -30,7 +31,21 @@ if database_url.get_backend_name() == "sqlite":
 
     engine_options["connect_args"] = {"check_same_thread": False}
 
+def enable_sqlite_foreign_keys(target: Engine) -> Engine:
+    """Make SQLite enforce FOREIGN KEY constraints (it ignores them unless asked, per connection)."""
+
+    @event.listens_for(target, "connect")
+    def _foreign_keys_on(dbapi_connection, _record) -> None:  # noqa: ANN001
+        cursor = dbapi_connection.cursor()
+        cursor.execute("PRAGMA foreign_keys=ON")
+        cursor.close()
+
+    return target
+
+
 engine = create_engine(database_url, **engine_options)
+if database_url.get_backend_name() == "sqlite":
+    enable_sqlite_foreign_keys(engine)
 
 SessionLocal = sessionmaker(
     bind=engine,

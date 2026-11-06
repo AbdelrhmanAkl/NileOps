@@ -19,6 +19,7 @@ from src.api.documents import router as documents_router
 from src.api.explanations import router as explanations_router
 from src.api.policies import router as policies_router
 from src.api.portal import router as portal_router
+from src.core.pii import StaffNote
 from src.core.auth import require_roles
 from src.core.config import get_settings
 from src.db.session import get_db
@@ -163,7 +164,7 @@ class ReviewRequest(BaseModel):
         "APPROVED",
         "REJECTED",
     ]
-    notes: str = Field(min_length=3, max_length=2000)
+    notes: StaffNote
 
 
 class ReviewResponse(BaseModel):

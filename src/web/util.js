@@ -114,7 +114,7 @@ export function toast(message, kind = "ok") {
 /** Confirmation dialog. With `notes`, a justification (3+ characters) is required. */
 export function confirmDialog({ title, body, confirmText = "تأكيد", danger = false, notes = false, notesLabel = "ملاحظات القرار (مطلوبة)" }) {
   return new Promise((resolve) => {
-    const textarea = notes ? h("textarea", { id: "dlg-notes", rows: "3", maxlength: "2000", required: true, "aria-label": notesLabel }) : null;
+    const textarea = notes ? h("textarea", { id: "dlg-notes", rows: "3", maxlength: "2000", required: true, placeholder: "لا تكتب أرقامًا شخصية أو عناوين هنا", "aria-label": notesLabel }) : null;
     const error = h("p", { class: "error", role: "alert", hidden: true });
     const dialog = h("dialog", { class: "dlg", "aria-labelledby": "dlg-title" });
     const finish = (result) => { dialog.close(); dialog.remove(); resolve(result); };
