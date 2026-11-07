@@ -288,6 +288,7 @@ def review_account_opening_request(
             db.add(opened_account)
             db.flush()
             opened_account.account_ref = f"SIM-ACC-{opened_account.id:06d}"
+            opened_account.account_number = f"EG0001{opened_account.id:08d}"
 
         audit_event = BankingAuditEvent(
             entity_type="account_opening_request",

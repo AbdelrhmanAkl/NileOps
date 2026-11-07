@@ -5,7 +5,7 @@ import { kycList, cardsList, accountsList, complaintsList, complaintDetail, card
 import { kycDetail } from "./v_kyc.js";
 import { policyView } from "./v_policy.js";
 import { usersView, auditView, systemView } from "./v_admin.js";
-import { portalHome, myComplaint, myKyc } from "./v_portal.js";
+import { portalHome, myComplaint, myKyc, myAccount } from "./v_portal.js";
 
 const REFRESH_MS = 60000;
 let session = null;
@@ -24,9 +24,10 @@ const NAV = [
   { key: "home", text: "الرئيسية", roles: ["customer"] },
   { key: "my-complaint", text: "شكوى", roles: ["customer"], hidden: true },
   { key: "my-kyc", text: "توثيق البيانات", roles: ["customer"], hidden: true },
+  { key: "my-account", text: "كشف حساب", roles: ["customer"], hidden: true },
 ];
 const LIST = { kyc: kycList, complaints: complaintsList, cards: cardsList, accounts: accountsList };
-const DETAIL = { kyc: kycDetail, complaints: complaintDetail, cards: cardDetail, accounts: accountDetail, "my-complaint": myComplaint, "my-kyc": myKyc };
+const DETAIL = { kyc: kycDetail, complaints: complaintDetail, cards: cardDetail, accounts: accountDetail, "my-complaint": myComplaint, "my-kyc": myKyc, "my-account": myAccount };
 const SIMPLE = { home: portalHome, overview, policies: policyView, users: usersView, audit: auditView, system: systemView };
 const ROLE_NOTE = {
   viewer: "وضع المشاهدة: قراءة فقط، ويُخفى الرقم القومي والموبايل.",

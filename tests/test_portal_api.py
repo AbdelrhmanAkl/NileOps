@@ -449,3 +449,41 @@ def test_customer_cannot_hold_two_open_requests_or_two_accounts_of_the_same_type
         assert ctx.client.post(review, headers=reviewer, json={"decision": decision, "notes": "مراجعة"}).status_code == 200
     blocked = ctx.client.post(f"{P}/account-requests", headers=h, json={"account_type": "savings"})
     assert blocked.status_code == 409 and "حساب نشط" in blocked.json()["detail"]
+
+
+
+def _give_finances(ctx, username, index):
+    from datetime import date
+
+    from scripts.seed_core_banking import ensure_branches, seed_customer_finances
+    from src.models.portal import CustomerAccount
+
+    with ctx.factory() as db:
+        user_id = db.scalar(select(User.id).where(User.username == username))
+        customer = db.get(Customer, db.scalar(select(CustomerAccount.customer_id).where(CustomerAccount.user_id == user_id)))
+        ensure_branches(db)
+        seed_customer_finances(db, customer, index, today=date(2026, 11, 1))
+        db.commit()
+
+
+def test_customer_sees_balances_and_a_statement_for_own_accounts_only(ctx):
+    a = ctx.new_customer("nadia")
+    b = ctx.new_customer("omar")
+    _give_finances(ctx, "nadia", 11)
+    _give_finances(ctx, "omar", 12)
+    mine = ctx.client.get(f"{P}/overview", headers=a).json()
+    theirs = ctx.client.get(f"{P}/overview", headers=b).json()
+    account = mine["accounts"][0]
+    assert account["account_number"].startswith("EG") and account["balance"] > 0
+    rows = ctx.client.get(f"{P}/accounts/{account['id']}/transactions?limit=5", headers=a).json()
+    assert len(rows) == 5 and rows[0]["balance_after"] >= 0
+    assert rows[0]["posted_at"] >= rows[-1]["posted_at"]
+    other = theirs["accounts"][0]["id"]
+    assert ctx.client.get(f"{P}/accounts/{other}/transactions", headers=a).status_code == 404
+    assert ctx.client.get(f"{P}/accounts/999999/transactions", headers=a).status_code == 404
+
+
+def test_staff_cannot_use_the_customer_statement_endpoint(ctx):
+    for role in ("viewer", "reviewer", "admin"):
+        assert ctx.client.get(f"{P}/accounts/1/transactions", headers=ctx.staff(role)).status_code == 403
+    assert ctx.client.get(f"{P}/accounts/1/transactions").status_code == 401

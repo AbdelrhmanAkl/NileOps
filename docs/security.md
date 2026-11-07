@@ -44,3 +44,9 @@ Before storing, `src/core/pii.py` masks digit sequences of 8 or more digits (nat
 numbers, including Arabic-Indic digits) as `[رقم محجوب]`. Names and addresses cannot be detected reliably and
 are **not** masked; the note dialog warns staff not to enter personal data. The audit trail is a normal
 database table (not tamper-proof): a hash chain is planned.
+
+## Database integrity (SQLite)
+
+SQLite ignores FOREIGN KEY constraints unless `PRAGMA foreign_keys=ON` is set on each connection.
+`src/db/session.py` enables it, so `ondelete` rules and orphan rows are enforced. Databases that already hold
+orphan rows will fail on writes to them: back up first (`python -m scripts.backup_db`) or recreate with `reset_demo`.

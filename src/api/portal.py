@@ -14,7 +14,7 @@ from datetime import datetime
 from typing import Literal
 from uuid import uuid4
 
-from fastapi import APIRouter, Depends, File, HTTPException, Request, UploadFile
+from fastapi import APIRouter, Depends, File, HTTPException, Query, Request, UploadFile
 from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import func, select
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
@@ -31,11 +31,13 @@ from src.core.throttle import register_throttle
 from src.db.session import get_db
 from src.models.banking import (
     AccountOpeningRequest,
+    AccountTransaction,
     BankAccount,
     BankingAuditEvent,
     CardIssuanceRequest,
     Complaint,
     Customer,
+    Loan,
 )
 from src.models.kyc import ApplicationStatus, AuditEvent, DocumentStatus, KYCApplication, KYCDocument
 from src.models.portal import CustomerAccount, CustomerKycLink
@@ -192,6 +194,31 @@ class AccountItem(BaseModel):
     account_type: str
     status: str
     currency: str
+    account_number: str | None = None
+    balance: float = 0.0
+
+
+class TransactionItem(BaseModel):
+    id: int
+    posted_at: datetime
+    kind: str
+    description: str
+    amount: float
+    currency: str
+    channel: str
+    balance_after: float
+
+
+class LoanItem(BaseModel):
+    id: int
+    loan_ref: str
+    loan_type: str
+    principal_amount: float
+    annual_rate: float
+    tenure_months: int
+    monthly_installment: float
+    start_date: str
+    status: str
 
 
 class Overview(BaseModel):
@@ -202,6 +229,7 @@ class Overview(BaseModel):
     card_requests: list[RequestItem]
     complaints: list[RequestItem]
     kyc_applications: list[RequestItem]
+    loans: list[LoanItem] = []
     simulation_only: bool = True
 
 
@@ -235,6 +263,34 @@ def _kyc_ids(db: Session, customer: Customer) -> list[int]:
     return list(db.scalars(select(CustomerKycLink.application_id).where(CustomerKycLink.customer_id == customer.id)))
 
 
+def _account_view(a: BankAccount) -> AccountItem:
+    return AccountItem(id=a.id, account_ref=a.account_ref, account_type=a.account_type, status=a.status,
+                       currency=a.currency, account_number=a.account_number, balance=float(a.balance))
+
+
+def _loan_view(x: Loan) -> LoanItem:
+    return LoanItem(id=x.id, loan_ref=x.loan_ref, loan_type=x.loan_type, principal_amount=float(x.principal_amount),
+                    annual_rate=float(x.annual_rate), tenure_months=x.tenure_months,
+                    monthly_installment=float(x.monthly_installment), start_date=x.start_date.isoformat(), status=x.status)
+
+
+@router.get("/accounts/{account_id}/transactions", response_model=list[TransactionItem], summary="كشف حساب")
+def account_statement(account_id: int, limit: int = Query(default=50, ge=1, le=200), offset: int = Query(default=0, ge=0),
+                      ctx: tuple[User, Customer] = Depends(current_customer),
+                      db: Session = Depends(get_db)) -> list[TransactionItem]:
+    """Newest first. Another customer's account looks exactly like a missing one (404)."""
+    _, c = ctx
+    account = db.scalar(select(BankAccount).where(BankAccount.id == account_id, BankAccount.customer_id == c.id))
+    if account is None:
+        raise HTTPException(status_code=404, detail="الحساب غير موجود.")
+    rows = db.scalars(
+        select(AccountTransaction).where(AccountTransaction.account_id == account.id)
+        .order_by(AccountTransaction.posted_at.desc(), AccountTransaction.id.desc()).limit(limit).offset(offset)
+    ).all()
+    return [TransactionItem(id=t.id, posted_at=t.posted_at, kind=t.kind, description=t.description_ar, amount=float(t.amount),
+                            currency=t.currency, channel=t.channel, balance_after=float(t.balance_after)) for t in rows]
+
+
 @router.get("/overview", response_model=Overview, summary="ملخص حسابي وطلباتي")
 def overview(ctx: tuple[User, Customer] = Depends(current_customer), db: Session = Depends(get_db)) -> Overview:
     _, c = ctx
@@ -245,8 +301,8 @@ def overview(ctx: tuple[User, Customer] = Depends(current_customer), db: Session
     return Overview(
         customer_name=c.full_name_ar,
         customer_ref=c.customer_ref,
-        accounts=[AccountItem(id=a.id, account_ref=a.account_ref, account_type=a.account_type, status=a.status, currency=a.currency)
-                  for a in db.scalars(newest(BankAccount))],
+        accounts=[_account_view(a) for a in db.scalars(newest(BankAccount))],
+        loans=[_loan_view(x) for x in db.scalars(newest(Loan))],
         account_requests=[_account_item(r) for r in db.scalars(newest(AccountOpeningRequest))],
         card_requests=[_card_item(r) for r in db.scalars(newest(CardIssuanceRequest))],
         complaints=[_complaint_item(x) for x in db.scalars(newest(Complaint))],

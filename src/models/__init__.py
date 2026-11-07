@@ -14,11 +14,14 @@ from src.models.documents import DocumentFile, ExtractedField
 from src.models.policies import PolicyChunk, PolicyDocument
 from src.models.banking import (
     AccountOpeningRequest,
+    AccountTransaction,
     BankAccount,
+    Branch,
     BankingAuditEvent,
     CardIssuanceRequest,
     Complaint,
     Customer,
+    Loan,
 )
 
 __all__ = [

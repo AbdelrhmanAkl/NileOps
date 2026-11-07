@@ -2,6 +2,9 @@
 import { h, api, replace, when, pill, loading, errorBox, empty, toast, formDialog, confirmDialog, busy, help } from "./util.js";
 
 const KIND = { account: "فتح حساب", card: "بطاقة", complaint: "شكوى", kyc: "توثيق بيانات" };
+const KIND_TX = { deposit: "إيداع", salary: "مرتب", withdrawal: "سحب", purchase: "شراء", transfer_out: "تحويل صادر", transfer_in: "تحويل وارد", fee: "رسوم", interest: "عائد", loan_installment: "قسط قرض" };
+const LOAN = { personal: "قرض شخصي", auto: "قرض سيارة", mortgage: "تمويل عقاري" };
+const money = (n, cur) => `${Number(n).toLocaleString("en", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${cur}`;
 const tone = (s) => (["approved", "issued", "resolved", "closed", "active", "مكتمل وفق قواعد التحقق"].includes(s) ? "approved" : ["rejected", "cancelled", "غير مستوفٍ لقواعد التحقق"].includes(s) ? "rejected" : ["needs_information", "مطلوب استكمال بيانات", "classified"].includes(s) ? "needs_information" : "");
 
 function requestRow(r) {
@@ -51,7 +54,10 @@ export async function portalHome(root, session) {
         })),
       h("div", { class: "grid2" },
         h("section", { class: "card" }, h("h3", {}, "حساباتي"), o.accounts.length === 0 ? empty("ليس لديك حسابات بعد.") :
-          o.accounts.map((a) => h("div", { class: "req" }, h("div", {}, h("span", { class: "k" }, a.account_type === "savings" ? "حساب توفير" : "حساب جاري"), " ", h("span", { dir: "ltr", class: "muted" }, a.account_ref)), pill(a.status === "active" ? "نشط" : a.status, tone(a.status))))),
+          o.accounts.map((a) => h("div", { class: "req" }, h("div", {}, h("span", { class: "k" }, a.account_type === "savings" ? "حساب توفير" : "حساب جاري"), " ", h("span", { dir: "ltr", class: "muted" }, a.account_number || a.account_ref)), pill(a.status === "active" ? "نشط" : a.status, tone(a.status)),
+            h("div", { class: "m" }, h("b", { dir: "ltr" }, money(a.balance, a.currency)), " ", h("a", { href: `#/my-account/${a.id}` }, "كشف الحساب"))))),
+        o.loans.length ? h("section", { class: "card" }, h("h3", {}, "التمويلات"), o.loans.map((l) => h("div", { class: "req" }, h("div", {}, h("span", { class: "k" }, LOAN[l.loan_type] || l.loan_type), " ", h("span", { dir: "ltr", class: "muted" }, l.loan_ref)), pill(l.status === "active" ? "منتظم" : l.status === "overdue" ? "متأخر" : "مُسدَّد", l.status === "overdue" ? "rejected" : "approved"),
+          h("div", { class: "m" }, `القسط الشهري: `, h("b", { dir: "ltr" }, money(l.monthly_installment, "EGP")), ` · المدة ${l.tenure_months} شهر · أصل التمويل `, h("span", { dir: "ltr" }, money(l.principal_amount, "EGP")))))) : null,
         h("section", { class: "card" }, h("h3", {}, "طلباتي وشكاواي"), all.length === 0 ? empty("لم تقدّم أي طلب بعد. ابدأ من الأزرار بالأعلى.") : all.map(requestRow))),
       h("p", { class: "muted" }, "جميع العمليات محاكاة ولا تُنفَّذ أي عملية مالية حقيقية."));
   };
@@ -91,4 +97,19 @@ export async function myKyc(root, session, id) {
       }));
   };
   await render();
+}
+
+
+export async function myAccount(root, session, id) {
+  replace(root, loading());
+  const [o, rows] = await Promise.all([api("/api/v1/portal/overview"), api(`/api/v1/portal/accounts/${id}/transactions?limit=100`)]);
+  const a = o.accounts.find((x) => String(x.id) === String(id));
+  replace(root, h("a", { class: "back", href: "#/home" }, "→ الرئيسية"),
+    h("div", { class: "page-head" }, h("h2", {}, a && a.account_type === "savings" ? "حساب توفير " : "حساب جاري ", h("span", { dir: "ltr" }, a ? a.account_number || a.account_ref : "")),
+      a ? h("b", { dir: "ltr" }, money(a.balance, a.currency)) : null),
+    h("section", { class: "card" }, h("h3", {}, "آخر الحركات"), rows.length === 0 ? empty("لا توجد حركات.") :
+      h("div", { class: "table-wrap" }, h("table", {}, h("thead", {}, h("tr", {}, ["التاريخ", "البيان", "النوع", "المبلغ", "الرصيد بعد الحركة"].map((t) => h("th", {}, t)))),
+        h("tbody", {}, rows.map((t) => h("tr", {}, h("td", {}, when(t.posted_at)), h("td", {}, t.description), h("td", {}, KIND_TX[t.kind] || t.kind),
+          h("td", { dir: "ltr" }, ["deposit", "salary", "transfer_in", "interest"].includes(t.kind) ? "+" : "−", money(t.amount, t.currency)), h("td", { dir: "ltr" }, money(t.balance_after, t.currency)))))))),
+    h("p", { class: "muted" }, "بيانات اصطناعية للمحاكاة فقط."));
 }

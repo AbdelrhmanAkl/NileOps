@@ -19,7 +19,7 @@ from src.models.banking import (
 RNG = random.Random(42)
 
 TARGETS = {
-    "customers": 30,
+    "customers": 60,
     "account_requests": 20,
     "accounts": 8,
     "card_requests": 15,

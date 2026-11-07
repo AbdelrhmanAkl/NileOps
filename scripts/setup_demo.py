@@ -10,6 +10,7 @@ from sqlalchemy import select
 import src.models  # noqa: F401
 from scripts.load_policies import main as load_policies_main
 from scripts.seed_banking_data import seed_data as seed_banking
+from scripts.seed_core_banking import apply_profile, ensure_branches, seed_core_banking, seed_customer_finances
 from scripts.seed_kyc_data import seed_data as seed_kyc
 from src.api.portal import create_customer_profile
 from src.core.config import get_settings
@@ -63,6 +64,10 @@ def main() -> int:
     Base.metadata.create_all(bind=engine)
     seed_kyc()
     seed_banking()
+    with SessionLocal() as db:
+        stats = seed_core_banking(db)
+        db.commit()
+    print(f"Core banking data: {stats}")
     load_policies_main()
     with SessionLocal() as db:
         for username, role in DEMO_USERS:
@@ -73,7 +78,10 @@ def main() -> int:
             user = User(username=username, password_hash=hash_password(DEMO_PASSWORD), role="customer", is_active=True)
             db.add(user)
             db.flush()
-            create_customer_profile(db, user, full_name)
+            profile = create_customer_profile(db, user, full_name)
+            apply_profile(profile, 500, ensure_branches(db))
+            profile.full_name_ar = full_name
+            seed_customer_finances(db, profile, 500)
         link_demo_kyc(db)
         db.commit()
     print("\n=== Demo ready (synthetic data only) ===")
