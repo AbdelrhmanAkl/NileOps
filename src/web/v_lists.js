@@ -140,4 +140,4 @@ export async function accountDetail(root, session, id) {
   };
   await render();
 }
-export { decisionBar, act, dl, num, back, canReview };
+export { decisionBar, act, dl, num, back, canReview, listPage };

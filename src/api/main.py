@@ -12,6 +12,7 @@ from sqlalchemy.orm import Session, selectinload
 from src.api.admin import router as admin_router
 from src.api.auth import router as auth_router
 from src.api.banking import router as banking_router
+from src.api.customers import router as customers_router
 from src.api.complaints import router as complaints_router
 from src.api.dashboard import router as dashboard_router
 from src.api.dashboard import web_router as dashboard_web_router
@@ -79,6 +80,7 @@ def root() -> RedirectResponse:
 app.include_router(auth_router)
 app.include_router(admin_router)
 app.include_router(banking_router)
+app.include_router(customers_router)
 app.include_router(complaints_router)
 app.include_router(documents_router)
 app.include_router(dashboard_router)

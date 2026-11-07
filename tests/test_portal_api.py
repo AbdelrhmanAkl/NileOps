@@ -170,6 +170,8 @@ def test_only_admin_creates_users_and_roles_never_cross_customer_boundary(ctx):
 
 # ------------------------------------------------------------ role separation
 STAFF_GET = [
+    "/api/v1/customers",
+    "/api/v1/customers/1",
     "/api/v1/dashboard/summary", "/api/v1/kyc/applications", "/api/v1/kyc/applications/1", "/api/v1/banking/complaints",
     "/api/v1/banking/complaints/1", "/api/v1/banking/card-issuance", "/api/v1/banking/account-opening",
     "/api/v1/policies", "/api/v1/admin/users", "/api/v1/admin/audit-events", "/api/v1/admin/system",
@@ -462,6 +464,7 @@ def _give_finances(ctx, username, index):
         user_id = db.scalar(select(User.id).where(User.username == username))
         customer = db.get(Customer, db.scalar(select(CustomerAccount.customer_id).where(CustomerAccount.user_id == user_id)))
         ensure_branches(db)
+        customer.date_of_birth = date(1990, 1, 1)
         seed_customer_finances(db, customer, index, today=date(2026, 11, 1))
         db.commit()
 
@@ -487,3 +490,34 @@ def test_staff_cannot_use_the_customer_statement_endpoint(ctx):
     for role in ("viewer", "reviewer", "admin"):
         assert ctx.client.get(f"{P}/accounts/1/transactions", headers=ctx.staff(role)).status_code == 403
     assert ctx.client.get(f"{P}/accounts/1/transactions").status_code == 401
+
+
+def test_staff_see_a_full_customer_profile_and_each_view_is_audited(ctx):
+    h = ctx.new_customer("rana")
+    _give_finances(ctx, "rana", 21)
+    ctx.client.post(f"{P}/complaints", headers=h, json={"description": LONG_COMPLAINT})
+    listing = ctx.client.get("/api/v1/customers?q=" + "رنا", headers=ctx.staff("viewer"))
+    assert listing.status_code == 200
+    customer_id = ctx.client.get(f"{P}/overview", headers=h).json()["customer_ref"]
+    with ctx.factory() as db:
+        cid = db.scalar(select(Customer.id).where(Customer.customer_ref == customer_id))
+    for role in ("viewer", "reviewer", "admin"):
+        r = ctx.client.get(f"/api/v1/customers/{cid}", headers=ctx.staff(role))
+        assert r.status_code == 200
+        body = r.json()
+        assert body["accounts"] and body["transactions"] and body["totals_egp"] > 0
+        assert body["kyc_state"] == "none"
+        assert (body["date_of_birth"] is None) == (role == "viewer")
+        assert any(x["kind"] == "complaint" for x in body["requests"])
+    with ctx.factory() as db:
+        views = db.scalars(select(BankingAuditEvent).where(BankingAuditEvent.action == "CUSTOMER_PROFILE_VIEWED")).all()
+        assert {v.actor_role for v in views} == {"viewer", "reviewer", "admin"}
+    assert ctx.client.get("/api/v1/customers/999999", headers=ctx.staff("admin")).status_code == 404
+
+
+def test_customer_list_is_paginated_and_searchable(ctx):
+    for name in ("sami", "tala"):
+        ctx.new_customer(name)
+    page = ctx.client.get("/api/v1/customers?page_size=1", headers=ctx.staff("reviewer")).json()
+    assert page["total"] >= 2 and len(page["items"]) == 1
+    assert ctx.client.get("/api/v1/customers?q=zzzz-none", headers=ctx.staff("reviewer")).json()["total"] == 0
